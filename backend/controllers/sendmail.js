@@ -9,7 +9,7 @@ const sendMail = async () => {
         port: 465,
         auth: {
             user: 'shreekrishnaudupa@gmail.com',
-            pass: 'svhqrkyfbvoxbuma'
+            pass: ''
         }
     });
 
