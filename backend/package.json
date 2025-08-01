@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon"
   },
   "keywords": [],
@@ -12,9 +11,13 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "ms": "^2.1.3",
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3"
   },
