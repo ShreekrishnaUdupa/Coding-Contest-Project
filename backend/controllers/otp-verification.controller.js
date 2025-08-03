@@ -1,5 +1,5 @@
 const pool = require ('../utils/db');
-const generateJWTAndCookieOptions = require ('../utils/generateJWTAndCookieOptions');
+const generateJWTAndCookieOptions = require ('../utils/generate-jwt-and-cookie-options');
 
 const verifyOTPAndGenerateJWT = async (req, res) => {
 

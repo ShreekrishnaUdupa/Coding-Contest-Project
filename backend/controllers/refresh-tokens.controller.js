@@ -1,6 +1,6 @@
 const jwt = require ('jsonwebtoken');
 const pool = require ('../utils/db.js');
-const generateJWTAndCookieOptions = require ('../utils/generateJWTAndCookieOptions');
+const generateJWTAndCookieOptions = require ('../utils/generate-jwt-and-cookie-options');
 
 const refreshTokens = async (req, res) => {
 

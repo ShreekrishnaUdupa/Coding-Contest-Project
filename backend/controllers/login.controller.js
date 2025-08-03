@@ -1,6 +1,6 @@
 const pool = require ('../utils/db.js');
 const bcrypt = require ('bcrypt');
-const generateJWTAndCookieOptions = require ('../utils/generateJWTAndCookieOptions');
+const generateJWTAndCookieOptions = require ('../utils/generate-jwt-and-cookie-options');
 
 const loginUser = async (req, res) => {
 
