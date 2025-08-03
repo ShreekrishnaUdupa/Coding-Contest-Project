@@ -35,20 +35,4 @@ const createProblem = async (req, res) => {
 
 };
 
-const runCode = async (req, res) => {
-    
-    const {problemId, language, code} = req.body;
-
-    const client = await pool.connect ();
-
-    await client.query ('BEGIN');
-
-    const results = client.query (`SELECT input, expected_output, points from test_cases where problem_id = $1`, [problemId]);
-
-    const testCases = results.rows;
-
-    
-
-};
-
 module.exports = {createProblem};
