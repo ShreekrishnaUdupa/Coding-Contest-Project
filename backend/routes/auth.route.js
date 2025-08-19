@@ -10,6 +10,6 @@ const router = express.Router();
 router.post ('/login', loginUser);
 router.post ('/register', registerUser);
 router.post ('/otp-verification', verifyOtp);
-router.post ('/tokens', generateNewTokens);
+router.post ('/new-tokens', generateNewTokens);
 
 export default router;

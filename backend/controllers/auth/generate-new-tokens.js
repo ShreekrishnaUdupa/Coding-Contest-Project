@@ -7,27 +7,27 @@ const generateNewTokens = async (req, res) => {
     const client = await pool.connect ();
 
     try {
-        const refreshToken = req.cookies.refreshToken || req.headers['authorization'].replace('Bearer', '').trim();
+        const oldRefreshToken = req.cookies.refreshToken || req.headers['authorization'].replace('Bearer ', '').trim();
 
-        if (!refreshToken)
+        if (!oldRefreshToken)
             return res.status(401).json({error: 'Unauthorized access'});
 
-        const {id} = jwt.verify (refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const {id} = jwt.verify (oldRefreshToken, process.env.REFRESH_TOKEN_SECRET);
 
         const result = await client.query (`Select refresh_token from users where id = $1`, [id]);
 
-        if (result.rowCount === 0 || result.rows[0].refresh_token !== refreshToken)
+        if (result.rowCount === 0 || result.rows[0].refresh_token !== oldRefreshToken)
             return res.status(401).json({error: 'Unauthorized access'});
 
-        const {accessToken, refreshToken: newRefreshToken, accessTokenCookieOption, refreshTokenCookieOption} = generateJWTAndCookieOptions (id);
+        const {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption} = generateJWTAndCookieOptions (id);
 
-        await client.query (`update users set refresh_token = $1 where id = $2`, [newRefreshToken, id]);
+        await client.query (`update users set refresh_token = $1 where id = $2`, [refreshToken, id]);
 
         return res
             .status (201)
             .cookie ('accessToken', accessToken, accessTokenCookieOption)
-            .cookie ('refreshToken', newRefreshToken, refreshTokenCookieOption)
-            .json({accessToken, refreshToken: newRefreshToken})
+            .cookie ('refreshToken', refreshToken, refreshTokenCookieOption)
+            .json({accessToken, refreshToken: refreshToken})
     }
 
     catch (error) {

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
 
-const generateJWTAndCookieOptions = async (id) => {
+const generateJWTAndCookieOptions = (id) => {
 
     const accessToken = jwt.sign (
         {id},

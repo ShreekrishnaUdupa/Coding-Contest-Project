@@ -36,7 +36,7 @@ const verifyOtp = async (req, res) => {
         await client.query (`update users set email_verified = true where id = $1`, [user.id]);
         await client.query (`delete from email_otps where user_id = $1`, [user.id]);
 
-        const {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption} = await generateJWTAndCookieOptions (user.id);
+        const {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption} = generateJWTAndCookieOptions (user.id);
 
         await client.query (`update users set refresh_token = $1 where id = $2`, [refreshToken, user.id]);
         await client.query (`COMMIT`);

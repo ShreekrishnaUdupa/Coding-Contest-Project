@@ -29,9 +29,10 @@ async function sendOtp (client, userId, email) {
 const registerUser = async (req, res) => {
 
     const {username, email, password} = req.body;
-    const client = await pool.connect();
+    let client;
 
     try {
+        client = await pool.connect ();
         await client.query ('BEGIN');
 
         const existingUserResult = await client.query ('SELECT username, email FROM users WHERE username = $1 OR email = $2', [username, email]);

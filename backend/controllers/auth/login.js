@@ -25,7 +25,7 @@ const loginUser = async (req, res) => {
             return res.status(400).json({error: "Wrong username or password"});
         }
 
-        const {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption} = await generateJWTAndCookieOptions (user.id);
+        const {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption} = generateJWTAndCookieOptions (user.id);
         
         await client.query (`update users set refresh_token = $1 where id = $2`, [refreshToken, user.id]);
         await client.query (`COMMIT`);

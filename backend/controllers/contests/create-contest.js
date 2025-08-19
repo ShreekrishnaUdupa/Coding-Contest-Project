@@ -2,17 +2,20 @@ import pool from '../../utils/db.js';
 
 const createContest = async (req, res) => {
 
-    const client = await pool.connect ();
+    const {name, title, description, rules, startTime, endTime} = req.body;
+    let client;
     
     try {
-        const {name, title, description, rules, startTime, endTime} = req.body;
 
+        client = await pool.connect ();
         await client.query ('BEGIN');
     
         const results = await client.query ('SELECT name FROM contests WHERE name = $1', [name]);
     
-        if (results.rowCount !== 0)
+        if (results.rowCount !== 0) {
+            await client.query('ROLLBACK');
             return res.status(409).json({error: 'Contest Name already exists, please choose a different one'});
+        }
     
         await client.query (`INSERT INTO contests (name, title, description, rules, start_time, end_time, created_by) VALUES ($1, $2, $3, $4, $5, $6, $7)`, [name, title, description, rules, startTime, endTime, req.user.id]);
 

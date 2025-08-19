@@ -1,22 +1,34 @@
 import pool from '../../utils/db.js';
 
-
 const createProblem = async (req, res) => {
 
-    const {contestId, difficulty, title, statement, constraints, testCases} = req.body;
-    const client = pool.connect ();
+    const {contestId, title, difficulty, statement, constraints, testCases} = req.body;
+    let client;
 
     try {
-
+        client = await pool.connect();
         await client.query ('BEGIN');
 
-        const result = await client.query (`INSERT INTO problems (contest_id, difficulty, title, statement, constraints) VALUES ($1, $2, $3, $4, $5) RETURNING ID`, [contestId, difficulty, title, statement, constraints]);
+        const result = await client.query (`
+            INSERT INTO problems (contest_id, title, difficulty, statement, constraints)
+            VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (contest_id, title)
+            DO UPDATE SET difficulty = EXCLUDED.difficulty,
+                          statement = EXCLUDED.statement,
+                          constraints = EXCLUDED.constraints
+            RETURNING id`,
+            [contestId, title, difficulty, statement, constraints]
+        );
 
-        const problemId = result[0].id;
+        const problemId = result.rows[0].id;
 
-        const testCaseValues = testCases.map (tc => `(${problemId}, ${tc.input}, ${tc.expectedOutput}, ${tc.points}, ${tc.isSample})`).join(',');
+        let testCasesValues = testCases.map (tc =>
+            `(${problemId}, '${tc.input}', '${tc.expectedOutput}', ${tc.points}, ${tc.isSample})`
+        ).join(',');
 
-        await client.query (`INSERT INTO test_cases (problem_id, input, expectezd_output, points, is_sample) VALUES ${testCaseValues}`);
+        testCasesValues += ';';
+
+        await client.query (`INSERT INTO test_cases (problem_id, input, expected_output, points, is_sample) VALUES ${testCasesValues}`);
 
         await client.query ('COMMIT');
 
@@ -30,7 +42,7 @@ const createProblem = async (req, res) => {
     }
 
     finally {
-        await client.release();
+        client.release();
     }
 
 
