@@ -1,8 +1,8 @@
-const jwt = require ('jsonwebtoken');
-const pool = require ('../utils/db.js');
-const generateJWTAndCookieOptions = require ('../utils/generate-jwt-and-cookie-options');
+import jwt from 'jsonwebtoken';
+import pool from '../../utils/db.js';
+import generateJWTAndCookieOptions from '../../utils/generate-jwt-and-cookie-options.js';
 
-const refreshTokens = async (req, res) => {
+const generateNewTokens = async (req, res) => {
 
     const client = await pool.connect ();
 
@@ -40,4 +40,4 @@ const refreshTokens = async (req, res) => {
     }
 };
 
-module.exports = {refreshTokens};
+export default generateNewTokens;

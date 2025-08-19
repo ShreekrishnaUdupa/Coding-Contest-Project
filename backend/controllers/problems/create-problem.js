@@ -1,4 +1,5 @@
-const pool = require ('../utils/db');
+import pool from '../../utils/db.js';
+
 
 const createProblem = async (req, res) => {
 
@@ -35,4 +36,4 @@ const createProblem = async (req, res) => {
 
 };
 
-module.exports = {createProblem};
+export default createProblem;

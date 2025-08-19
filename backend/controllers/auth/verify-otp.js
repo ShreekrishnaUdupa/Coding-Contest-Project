@@ -1,7 +1,7 @@
-const pool = require ('../utils/db');
-const generateJWTAndCookieOptions = require ('../utils/generate-jwt-and-cookie-options');
+import pool from '../../utils/db.js';
+import generateJWTAndCookieOptions from '../../utils/generate-jwt-and-cookie-options.js';
 
-const verifyOTPAndGenerateJWT = async (req, res) => {
+const verifyOtp = async (req, res) => {
 
     let client;
     
@@ -58,4 +58,4 @@ const verifyOTPAndGenerateJWT = async (req, res) => {
     }
 };
 
-module.exports = {verifyOTPAndGenerateJWT};
+export default verifyOtp;

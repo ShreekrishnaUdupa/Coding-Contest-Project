@@ -1,9 +1,9 @@
-const express = require ('express');
-const verifyToken = require ('../middleware/verify-token.middleware');
-const {createProblem} = require ('../controllers/problems.controller');
+import express from 'express';
+import verifyToken from '../middleware/verify-token.middleware.js';
+import createProblem from '../controllers/problems/create-problem.js';
 
 const router = express.Router();
 
-router.post('/problems', verifyToken, createProblem);
+router.post('/', verifyToken, createProblem);
 
-module.exports = router;
+export default router;

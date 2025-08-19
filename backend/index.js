@@ -1,27 +1,27 @@
-const dotenv = require ('dotenv').config();
-const express = require ('express');
-const cors = require ('cors');
-const cookieParser = require ('cookie-parser');
+import dotenv from 'dotenv';
+await dotenv.config();
 
-const RegisterRoute = require ('./routes/register.route');
-const OTPVerificationRoute = require ('./routes/otp-verification.route');
-const loginRoute = require ('./routes/login.route');
-const refreshTokensRoute = require ('./routes/refresh-tokens.route');
-const contestsRoute = require ('./routes/contests.route');
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+
+import authRoute from './routes/auth.route.js';
+import contestsRoute from './routes/contests.route.js';
+import problemsRoute from './routes/problems.route.js';
+import submissionsRoute from './routes/submissions.route.js';
 
 const app = express ();
 
-app.use(cors({origin: '*', credentials: true}));
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
-app.use(cookieParser());
+app.use (cors({origin: '*', credentials: true }));
+app.use (express.urlencoded({ extended: true }));
+app.use (express.json());
+app.use (cookieParser());
 
-app.use(RegisterRoute);
-app.use(OTPVerificationRoute);
-app.use(loginRoute);
-app.use(refreshTokensRoute);
-app.use(contestsRoute);
+app.use ('/api/auth', authRoute);
+app.use ('/api/contests', contestsRoute);
+app.use ('/api/problems', problemsRoute);
+app.use ('/api/submissions', submissionsRoute);
 
-app.listen(4000, () => {
-    console.log('Server running on port 4000');
+app.listen(4000, async () => {
+    console.log("Server running on port 4000");
 });

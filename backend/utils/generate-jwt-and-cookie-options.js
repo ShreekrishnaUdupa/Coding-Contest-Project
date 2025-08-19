@@ -1,5 +1,5 @@
-const jwt = require ('jsonwebtoken');
-const ms = require ('ms');
+import jwt from 'jsonwebtoken';
+import ms from 'ms';
 
 const generateJWTAndCookieOptions = async (id) => {
 
@@ -30,4 +30,4 @@ const generateJWTAndCookieOptions = async (id) => {
     return {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption};
 };
 
-module.exports = generateJWTAndCookieOptions;
+export default generateJWTAndCookieOptions;

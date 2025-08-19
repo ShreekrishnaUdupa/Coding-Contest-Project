@@ -1,4 +1,4 @@
-const pool = require ('../utils/db');
+import pool from '../../utils/db.js';
 
 const createContest = async (req, res) => {
 
@@ -32,4 +32,4 @@ const createContest = async (req, res) => {
     }
 };
 
-module.exports = {createContest};
+export default createContest;

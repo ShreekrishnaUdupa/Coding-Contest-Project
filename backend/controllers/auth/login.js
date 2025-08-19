@@ -1,6 +1,6 @@
-const pool = require ('../utils/db.js');
-const bcrypt = require ('bcrypt');
-const generateJWTAndCookieOptions = require ('../utils/generate-jwt-and-cookie-options');
+import pool from '../../utils/db.js';
+import bcrypt from 'bcrypt';
+import generateJWTAndCookieOptions from '../../utils/generate-jwt-and-cookie-options.js';
 
 const loginUser = async (req, res) => {
 
@@ -46,4 +46,4 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = {loginUser};
+export default loginUser;

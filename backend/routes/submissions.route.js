@@ -1,9 +1,9 @@
-const express = require ('express');
-const verifyToken = require ('../middleware/verify-token.middleware');
-const {runCode} = require ('../middleware/submissions.controller');
+import express from 'express';
+import verifyToken from '../middleware/verify-token.middleware.js';
+import runCode from '../controllers/submissions/run-code.js';
 
 const router = express.Router();
 
-router.post ('/submissions', verifyToken, runCode);
+router.post ('/', verifyToken, runCode);
 
-module.exports = router;
+export default router;

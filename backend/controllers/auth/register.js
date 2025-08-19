@@ -1,8 +1,8 @@
-const pool = require ('../utils/db');
-const bcrypt = require ('bcrypt');
-const nodemailer = require ('nodemailer');
+import nodemailer from 'nodemailer';
+import bcrypt from 'bcrypt';
+import pool from '../../utils/db.js';
 
-const sendOtp = async (client, userId, email) => {
+async function sendOtp (client, userId, email) {
     
     const otp = String(Math.floor (1000 + Math.random() * 9000));
 
@@ -24,7 +24,7 @@ const sendOtp = async (client, userId, email) => {
     });
 
     await client.query ('INSERT INTO email_otps (user_id, otp) VALUES ($1, $2);', [userId, otp]);
-};
+}
 
 const registerUser = async (req, res) => {
 
@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
     try {
         await client.query ('BEGIN');
 
-        const existingUserResult = await client.query ('SELECT username, email FROM users WHERE (username = $1 OR email = $2) AND email_verified = false;', [username, email]);
+        const existingUserResult = await client.query ('SELECT username, email FROM users WHERE username = $1 OR email = $2', [username, email]);
 
         if (existingUserResult.rows.length !== 0) {
 
@@ -70,4 +70,4 @@ const registerUser = async (req, res) => {
     }
 };
 
-module.exports = {registerUser};
+export default registerUser;
