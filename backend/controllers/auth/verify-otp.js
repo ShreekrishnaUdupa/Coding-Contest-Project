@@ -49,7 +49,7 @@ const verifyOtp = async (req, res) => {
     
     catch (error) {
         await client.query ('ROLLBACK');
-        console.log('OTP verification error', error);
+        console.error('OTP verification error', error);
         return res.status(500).json({error: 'Internal Server error'});
     }
 

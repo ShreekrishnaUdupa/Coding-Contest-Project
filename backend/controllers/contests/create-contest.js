@@ -26,7 +26,7 @@ const createContest = async (req, res) => {
     
     catch (error) {
         await client.query ('ROLLBACK');
-        console.log('Error in createContest', error);
+        console.error('Error in createContest', error);
         return res.status(500).json({error: 'Internal server error'});
     }
 

@@ -37,15 +37,13 @@ const createProblem = async (req, res) => {
     
     catch (error) {
         await client.query ('ROLLBACK');
-        console.log('Error happened in createProblem', error);
+        console.error('Error happened in createProblem', error);
         return res.status(500).json({error: 'Internal server error'});
     }
 
     finally {
         client.release();
     }
-
-
 };
 
 export default createProblem;
