@@ -12,10 +12,6 @@ const createProblem = async (req, res) => {
         const result = await client.query (`
             INSERT INTO problems (contest_id, title, difficulty, statement, constraints)
             VALUES ($1, $2, $3, $4, $5)
-            ON CONFLICT (contest_id, title)
-            DO UPDATE SET difficulty = EXCLUDED.difficulty,
-                          statement = EXCLUDED.statement,
-                          constraints = EXCLUDED.constraints
             RETURNING id`,
             [contestId, title, difficulty, statement, constraints]
         );

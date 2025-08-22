@@ -16,7 +16,7 @@ const submitCode = async (req, res) => {
         const submissionId = insertResult.rows[0].id;
 
         const {rows: testCases} = await client.query (`
-            SELECT id, input, expected_output as expectedOutput, points from test_cases where problem_id = $1`,
+            SELECT id, input, expected_output, points from test_cases where problem_id = $1`,
             [problemId]
         );
 

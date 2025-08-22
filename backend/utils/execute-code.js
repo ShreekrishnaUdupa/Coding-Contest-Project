@@ -118,8 +118,9 @@ const executeCode = async (language, code, testCases) => {
     for (const testCase of testCases) {
         try {
             const stdout = await executeInDocker (containerName, runCommand, testCase.input);
+            
             const actualOutput = stdout.trim();
-            const expectedOutput = testCase.expectedOutput.trim();
+            const expectedOutput = testCase.expected_output.trim();
 
             results.push ({
                 actualOutput,

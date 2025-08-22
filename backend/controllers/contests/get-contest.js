@@ -2,10 +2,10 @@ import pool from '../../utils.db.js';
 
 const getContest = async (req, res) => {
 
-    let client;
+    const client = await pool.connect();
 
     try {
-        client = await pool.connect();
+
     }
 
     catch (error) {
