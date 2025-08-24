@@ -1,14 +1,14 @@
 import pool from '../../utils/db.js';
 
 const getProblems = async (req, res) => {
-    try {
-        await pool.query ('')
-    }
+	try {
+		const {contestId} = req.params;
+	}
 
-    catch (error) {
-        console.error(error);
-        return res.status(500).json({error: 'Internal server error'});
-    }
+	catch (error) {
+		console.error(error);
+		return res.status(500).json({error: 'Internal server error'});
+	}
 };
 
 export default getProblems;
