@@ -2,7 +2,7 @@ import pool from '../../utils/db.js';
 
 const createProblem = async (req, res) => {
 
-    const {contestId, number, title, difficulty, statement, constraints, testCases} = req.body;
+    const {contestId, number, title, difficulty, statement, inputFormat, outputFormat, constraints, testCases} = req.body;
     let client;
 
     try {
@@ -10,10 +10,10 @@ const createProblem = async (req, res) => {
         await client.query ('BEGIN');
 
         const result = await client.query (`
-            INSERT INTO problems (contest_id, number, title, difficulty, statement, constraints)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO problems (contest_id, number, title, difficulty, statement, input_format, output_format, constraints)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id`,
-            [contestId, number, title, difficulty, statement, constraints]
+            [contestId, number, title, difficulty, statement, inputFormat, outputFormat, constraints]
         );
 
         const problemId = result.rows[0].id;

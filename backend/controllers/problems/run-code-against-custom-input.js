@@ -1,6 +1,6 @@
 import pool from '../../utils/db.js';
 
-const runAgainstCustomInput = async (req, res) => {
+const runCodeAgainstCustomInput = async (req, res) => {
     try {
 
     }
@@ -14,4 +14,4 @@ const runAgainstCustomInput = async (req, res) => {
     }
 };
 
-export default runAgainstCustomInput;
+export default runCodeAgainstCustomInput;

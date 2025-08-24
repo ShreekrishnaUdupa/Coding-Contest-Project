@@ -1,6 +1,6 @@
 import pool from '../utils/db.js';
 
-const verifyOrganizerOrModerator = async (req, res, next) => {
+const verifyRoleOrganizerOrModerator = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const results = await pool.query (`Select role from contest_user_roles where user_id = $1`, [userId]);
@@ -19,4 +19,4 @@ const verifyOrganizerOrModerator = async (req, res, next) => {
     }
 };
 
-export default verifyOrganizerOrModerator;
+export default verifyRoleOrganizerOrModerator;

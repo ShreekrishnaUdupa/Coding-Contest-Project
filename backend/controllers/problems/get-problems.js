@@ -2,7 +2,7 @@ import pool from '../../utils/db.js';
 
 const getProblems = async (req, res) => {
 	try {
-		const {contestId} = req.params;
+		const {contestId} = req.query;
 	}
 
 	catch (error) {
