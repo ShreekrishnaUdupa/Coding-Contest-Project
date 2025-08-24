@@ -2,7 +2,7 @@ import pool from '../../utils/db.js';
 
 const getProblems = async (req, res) => {
     try {
-
+        await pool.query ('')
     }
 
     catch (error) {

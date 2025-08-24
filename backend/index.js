@@ -22,6 +22,6 @@ app.use ('/api/contests', contestsRoute);
 app.use ('/api/problems', problemsRoute);
 app.use ('/api/submissions', submissionsRoute);
 
-app.listen(4000, async () => {
+app.listen(4000, () => {
     console.log("Server running on port 4000");
 });

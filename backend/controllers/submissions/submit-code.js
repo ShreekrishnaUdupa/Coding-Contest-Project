@@ -27,6 +27,8 @@ const submitCode = async (req, res) => {
         ).join(',');
 
         await client.query (`INSERT INTO submission_results (submission_id, test_case_id, passed) VALUES ${values}`);
+
+        await client.query (`CALL update_leaderboards_procedure ($1)`, [submissionId]);
         
         await client.query('COMMIT');
 
