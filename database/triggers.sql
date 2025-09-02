@@ -4,6 +4,7 @@ BEGIN
     INSERT INTO contest_user_roles (contest_id, user_id, role)
     VALUES (NEW.id, NEW.created_by, 'organizer')
     ON CONFLICT (contest_id, user_id) DO NOTHING;
+	
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -18,6 +19,39 @@ BEGIN
     END IF;
     
     RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_problems_total_points_after_insert ()
+RETURNS TRIGGER AS $$
+BEGIN
+	UPDATE problems
+	SET total_points = total_points + NEW.points
+	WHERE id = NEW.problem_id;
+	
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_problems_total_points_after_update ()
+RETURNS TRIGGER AS $$
+BEGIN
+	UPDATE problems
+	SET total_points = total_points + (NEW.points - OLD.points)
+	WHERE id = NEW.problem_id;
+
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_problems_total_points_after_delete ()
+RETURNS TRIGGER AS $$
+BEGIN
+	UPDATE problems
+	SET total_points = total_points - OLD.points
+	WHERE id = OLD.problem_id;
+	
+	RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -57,6 +91,21 @@ CREATE OR REPLACE TRIGGER trigger_insert_participant_in_leaderboards
 AFTER INSERT ON contest_user_roles
 FOR EACH ROW
 EXECUTE FUNCTION insert_participant_in_leaderboards ();
+
+CREATE OR REPLACE TRIGGER trigger_update_problems_total_points_after_insert
+AFTER INSERT ON test_cases
+FOR EACH ROW
+EXECUTE FUNCTION update_problems_total_points_after_insert();
+
+CREATE OR REPLACE TRIGGER trigger_update_problems_total_points_after_update
+AFTER UPDATE ON test_cases
+FOR EACH ROW
+EXECUTE FUNCTION update_problems_total_points_after_update();
+
+CREATE OR REPLACE TRIGGER trigger_update_problems_total_points_after_delete
+AFTER DELETE ON test_cases
+FOR EACH ROW
+EXECUTE FUNCTION update_problems_total_points_after_delete();
 
 CREATE OR REPLACE TRIGGER trigger_update_submissions_points
 AFTER INSERT ON submission_results

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Loading from '../components/Loading';
 
 export default function GetContestPage () {
 	
   const {name} = useParams();
+  const navigate = useNavigate();
 
   const [contest, setContest] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(null);
@@ -66,7 +67,13 @@ export default function GetContestPage () {
     const mins = String (Math.floor ((seconds % 3600) / 60)).padStart(2, "0");
     const secs = String (seconds % 60).padStart (2, "0");
 
+    setTimeRemaining(0);
+
     return `${hrs}:${mins}:${secs}`;
+  }
+
+  function enterContest () {
+    navigate (`/${name}/problems`); 
   }
 
   const hasStarted = timeRemaining === 0;
@@ -82,7 +89,7 @@ export default function GetContestPage () {
       <div> Start Time: {new Date(contest.startTime).toLocaleString()} </div>
       <div> End Time: {new Date(contest.endTime).toLocaleString()} </div>
 
-      {hasStarted ? (<button> Enter Contest </button>)
+      {hasStarted ? (<button onClick={enterContest}> Enter Contest </button>)
       : (<p> Contest starts in {formatTime(timeRemaining)} </p>)
       }
 

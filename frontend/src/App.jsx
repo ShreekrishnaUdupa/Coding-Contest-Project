@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import GetContestPage from "./pages/GetContestPage";
+import GetProblemsPage from "./pages/GetProblemsPage";
 import ProblemPage from "./pages/ProblemPage";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
         <Route path="/:name" element={<GetContestPage />} />
+        <Route path="/:name/problems" element={<GetProblemsPage />} />
         <Route path="/problems" element={< ProblemPage />} />
 			</Routes>
 		</BrowserRouter>

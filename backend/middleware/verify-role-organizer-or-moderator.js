@@ -7,7 +7,10 @@ const verifyRoleOrganizerOrModerator = async (req, res, next) => {
 
         const role = results.rows[0].role;
 
-        if (role != 'organizer' || role != 'moderator')
+        console.log(userId);
+        console.log(role);
+
+        if (role != 'organizer' && role != 'moderator')
             return res.status(401).json({error: 'Unauthorized access'});
 
         next ();

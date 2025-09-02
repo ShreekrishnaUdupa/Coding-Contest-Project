@@ -3,7 +3,6 @@ import pool from '../../utils/db.js';
 const createContest = async (req, res) => {
 
     const {name, title, description, rules, startTime, endTime} = req.body;
-    console.log(req.user.id);
     let client;
     
     try {

@@ -67,6 +67,7 @@ CREATE TABLE problems (
     title TEXT,
     statement TEXT,
     constraints TEXT,
+	total_points FLOAT DEFAULT 0,
 
 	CONSTRAINT unique_problem_per_contest UNIQUE (contest_id, number)
 );
