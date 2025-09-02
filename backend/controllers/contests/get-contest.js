@@ -7,6 +7,9 @@ const getContest = async (req, res) => {
     try {
         const results = await pool.query (`SELECT id, title, description, rules, start_time, end_time from contests where name = $1`, [contestName]);
 
+        if (results.rows.length === 0)
+          return res.status(404).json({error: 'Error 404, contest not found'});
+
         const {id, title, description, rules, start_time: startTime, end_time: endTime} = results.rows[0];
 
         return res.status(200).json({id, title, description, rules, startTime, endTime});
