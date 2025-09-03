@@ -12,10 +12,8 @@ DROP TYPE IF EXISTS DIFFICULTY_LEVEL;
 DROP TYPE IF EXISTS ROLES;
 
 DROP INDEX IF EXISTS index_submission_results_submission_id;
-DROP INDEX IF EXISTS index_submissions_submission_time;
 DROP INDEX IF EXISTS index_submissions_user_id_problem_id;
 DROP INDEX IF EXISTS index_test_cases_problem_id;
-DROP INDEX IF EXISTS index_problems_contest_id_number;
 
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -44,7 +42,6 @@ CREATE TABLE contests (
     rules TEXT,
     start_time TIMESTAMPTZ NOT NULL,
     end_time TIMESTAMPTZ NOT NULL,
-    created_by UUID REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT current_timestamp
 );
 
@@ -62,29 +59,21 @@ CREATE TYPE DIFFICULTY_LEVEL AS ENUM ('easy', 'medium', 'hard');
 CREATE TABLE problems (
 	id SERIAL PRIMARY KEY,
     contest_id INT REFERENCES contests(id) ON DELETE CASCADE,
-	number INT NOT NULL,
     difficulty DIFFICULTY_LEVEL NOT NULL,
     title TEXT,
     statement TEXT,
     constraints TEXT,
-	total_points FLOAT DEFAULT 0,
-
-	CONSTRAINT unique_problem_per_contest UNIQUE (contest_id, number)
+	total_points FLOAT DEFAULT 0
 );
-
-CREATE INDEX index_problems_contest_id_number ON problems (contest_id, number);
 
 CREATE TABLE test_cases (
     id SERIAL PRIMARY KEY,
     problem_id INT REFERENCES problems(id) ON DELETE CASCADE,
-	number INT NOT NULL,
     input TEXT,
     expected_output TEXT,
     points FLOAT,
     is_sample BOOLEAN
 );
-
-CREATE INDEX index_test_cases_problem_id ON test_cases(problem_id);
 
 CREATE TABLE submissions (
     id SERIAL PRIMARY KEY,
@@ -94,12 +83,8 @@ CREATE TABLE submissions (
     points FLOAT DEFAULT 0,
     total_points FLOAT DEFAULT 0,
     test_cases_passed INT DEFAULT 0,
-    total_test_cases INT DEFAULT 0,
-    submission_time TIMESTAMPTZ DEFAULT current_timestamp
+    total_test_cases INT DEFAULT 0
 );
-
-CREATE INDEX index_submissions_user_id_problem_id ON submissions (user_id, problem_id);
-CREATE INDEX index_submissions_submission_time ON submissions (submission_time DESC);
 
 CREATE TABLE submission_results (
     id SERIAL PRIMARY KEY,
@@ -107,8 +92,6 @@ CREATE TABLE submission_results (
     test_case_id INT REFERENCES test_cases(id) ON DELETE CASCADE,
     passed BOOLEAN NOT NULL
 );
-
-CREATE INDEX index_submission_results_submission_id ON submission_results (submission_id);
 
 CREATE TABLE leaderboards (
     contest_id INT REFERENCES contests(id) ON DELETE CASCADE,
@@ -118,3 +101,8 @@ CREATE TABLE leaderboards (
     
     PRIMARY KEY (contest_id, user_id)
 ) PARTITION BY LIST (contest_id);
+
+
+CREATE INDEX index_test_cases_problem_id ON test_cases(problem_id);
+CREATE INDEX index_submissions_user_id_problem_id ON submissions (user_id, problem_id);
+CREATE INDEX index_submission_results_submission_id ON submission_results (submission_id);

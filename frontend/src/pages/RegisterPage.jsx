@@ -5,6 +5,7 @@ export default function RegisterPage() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
@@ -24,13 +25,14 @@ export default function RegisterPage() {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error(error);
-      window.alert(error);
+      console.error(data.error);
+      window.alert(data.error);
       setError(data.error);
+      return;
     }
 
     sessionStorage.setItem('email', email);
-    navigate('otp-verification');
+    navigate('/otp-verification');
   };
 
   return (
@@ -126,26 +128,41 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Password field */}
-              <div className="relative group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2 transition-all duration-200">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                  />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+{/* Password field */}
+<div className="relative group">
+  <label className="block text-sm font-semibold text-gray-700 mb-2 transition-all duration-200">
+    Password
+  </label>
+  <div className="relative">
+    <input
+      type={showPassword ? 'text' : 'password'}
+      className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Enter your password"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none"
+    >
+      {showPassword ? (
+        // Eye-off
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17.94 17.94A10.97 10.97 0 0 1 12 19c-5.523 0-10-4.477-10-10 0-1.485.373-2.888 1.03-4.135M1 1l22 22" />
+          <path d="M10.58 10.58a3 3 0 0 0 4.24 4.24" />
+        </svg>
+      ) : (
+        // Eye
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      )}
+    </button>
+  </div>
+</div>
+
 
               {/* Submit button */}
               <button

@@ -18,7 +18,7 @@ const router = express.Router();
 router.post ('/', verifyToken, verifyRoleOrganizerOrModerator, createProblem);
 router.get ('/:problemId/submissions/code', verifyToken, verifyRole, getLatestCode);
 router.get ('/:problemId', verifyToken, verifyRole, getProblem);
-router.get ('/contests/:contestId', verifyToken, verifyRole, getProblems);
+router.get ('/contests/:contestName', verifyToken, verifyRole, getProblems);
 router.get ('/:problemId/sample-test-cases', verifyToken, verifyRole, getSampleTestCases);
 router.get ('/:problemId/submissions', verifyToken, verifyRole, getSubmissions);
 router.post ('/:problemId/run/custom', verifyToken, verifyRoleParticipant, runCodeAgainstCustomInput);

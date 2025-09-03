@@ -17,9 +17,11 @@ const createContest = async (req, res) => {
             return res.status(409).json({error: 'Contest Name already exists, please choose a different one'});
         }
     
-        const insertContestResult = await client.query (`INSERT INTO contests (name, title, description, rules, start_time, end_time, created_by) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING ID`, [name, title, description, rules, startTime, endTime, req.user.id]);
+        const insertContestResult = await client.query (`INSERT INTO contests (name, title, description, rules, start_time, end_time) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ID`, [name, title, description, rules, startTime, endTime]);
 
         const contestId = insertContestResult.rows[0].id;
+
+        await client.query (`CALL insert_organizer_in_contest_user_roles ($1, $2);`, [req.user.id, contestId]);
 
         await client.query ('COMMIT');
 
