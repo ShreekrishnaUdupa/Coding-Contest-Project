@@ -3,14 +3,19 @@ import { useParams, useNavigate} from 'react-router-dom';
 
 export default function GetProblemsPage () {
 
-  const {name} = useParams();
+  const {name: contestName} = useParams();
   const navigate = useNavigate();
 
   const [problems, setProblems] = useState([]);
 
   useEffect (() => {
+    
+    const response = fetch (`http://localhost:4000/api/problems/${contestName}`);
+    const data = response.json();
 
-  }, [name]);
+    console.log(data);
+
+  }, [contestName]);
   
   return (
     <div> This is the Get Problems Page </div>
