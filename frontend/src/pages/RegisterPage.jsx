@@ -191,7 +191,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Additional decorative elements */}
+        {/* Additional decorative elements (ones on the top corners) */}
         <div className="absolute -top-4 -left-4 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full opacity-60"></div>
         <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-60"></div>
       </div>
