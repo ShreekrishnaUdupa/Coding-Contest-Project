@@ -14,6 +14,8 @@ export default function App() {
 		<BrowserRouter>
       <Routes>
         <Route path="/temp" element={<TempPage />} />
+                <Route path="/oauth/callback" element={<LoginPage />} />
+
 				<Route path="/" element={<HomePage />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
