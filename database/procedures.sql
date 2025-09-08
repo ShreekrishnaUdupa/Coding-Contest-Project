@@ -1,13 +1,3 @@
-CREATE OR REPLACE PROCEDURE insert_organizer_in_contest_user_roles (p_user_id UUID, p_contest_id INT)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-	INSERT INTO contest_user_roles (user_id, contest_id, role)
-	VALUES
-	(p_user_id, p_contest_id, 'organizer');
-END;
-$$;
-
 CREATE OR REPLACE PROCEDURE update_leaderboards_procedure (p_submission_id INT)
 LANGUAGE plpgsql
 AS $$

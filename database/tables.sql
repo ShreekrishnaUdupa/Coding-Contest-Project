@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS contests;
 DROP TABLE IF EXISTS email_otps;
 DROP TABLE IF EXISTS users;
 
+DROP TYPE IF EXISTS OAUTH2_PROVIDERS;
 DROP TYPE IF EXISTS DIFFICULTY_LEVEL;
 DROP TYPE IF EXISTS ROLES;
 
@@ -15,13 +16,15 @@ DROP INDEX IF EXISTS index_submission_results_submission_id;
 DROP INDEX IF EXISTS index_submissions_user_id_problem_id;
 DROP INDEX IF EXISTS index_test_cases_problem_id;
 
+CREATE TYPE OAUTH2_PROVIDERS AS ENUM ('google', 'github');
+
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     hashed_password TEXT,
     email_verified BOOLEAN DEFAULT false,
-    oauth_provider VARCHAR(30),
+    oauth2_provider OAUTH2_PROVIDERS,
     refresh_token TEXT,
     created_at TIMESTAMPTZ DEFAULT current_timestamp
 );
@@ -42,13 +45,15 @@ CREATE TABLE contests (
     rules TEXT,
     start_time TIMESTAMPTZ NOT NULL,
     end_time TIMESTAMPTZ NOT NULL,
+	  created_by UUID NOT NULL,
     created_at TIMESTAMPTZ DEFAULT current_timestamp
 );
 
 CREATE TYPE ROLES AS ENUM ('organizer', 'moderator', 'participant');
+
 CREATE TABLE contest_user_roles (
     contest_id INT REFERENCES contests(id) ON DELETE CASCADE,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID,
     role ROLES DEFAULT 'participant',
     assigned_at TIMESTAMPTZ DEFAULT current_timestamp,
     
@@ -77,7 +82,7 @@ CREATE TABLE test_cases (
 
 CREATE TABLE submissions (
     id SERIAL PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID,
     problem_id INT REFERENCES problems(id) ON DELETE CASCADE,
     code TEXT,
     points FLOAT DEFAULT 0,
@@ -95,7 +100,7 @@ CREATE TABLE submission_results (
 
 CREATE TABLE leaderboards (
     contest_id INT REFERENCES contests(id) ON DELETE CASCADE,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID,
     total_points FLOAT DEFAULT 0,
     total_submissions INT DEFAULT 0,
     

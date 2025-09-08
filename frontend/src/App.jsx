@@ -6,11 +6,14 @@ import OtpVerificationPage from "./pages/OtpVerificationPage";
 import GetContestPage from "./pages/GetContestPage";
 import GetProblemsPage from "./pages/GetProblemsPage";
 import ProblemPage from "./pages/ProblemPage";
+import TempPage from "./pages/TempPage";
 
 export default function App() {
+
   return (
 		<BrowserRouter>
       <Routes>
+        <Route path="/temp" element={<TempPage />} />
 				<Route path="/" element={<HomePage />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
