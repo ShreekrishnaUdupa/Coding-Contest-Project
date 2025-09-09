@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GoogleButton from '../components/GoogleButton.jsx';
+import GithubButton from '../components/GithubButton.jsx';
 
 export default function RegisterPage() {
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -178,6 +181,24 @@ export default function RegisterPage() {
                 </span>
               </button>
             </div>
+
+            {/* Divider */}
+<div className="mt-8 mb-6">
+  <div className="relative">
+    <div className="absolute inset-0 flex items-center">
+      <div className="w-full border-t border-gray-200"></div>
+    </div>
+    <div className="relative flex justify-center text-sm">
+      <span className="px-4 bg-white text-gray-500">Or sign up with</span>
+    </div>
+  </div>
+</div>
+
+<div className="grid grid-cols-2 gap-4">
+  <GoogleButton />
+  <GithubButton />
+</div>
+
 
             {/* Footer */}
             <div className="mt-8 text-center">
