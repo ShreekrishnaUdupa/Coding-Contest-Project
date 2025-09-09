@@ -1,8 +1,61 @@
 import pool from '../../utils/db.js';
 
 const githubLogin = async (req, res) => {
+	
+	const {code} = req.body;
+	const client = await pool.connect();
+	
 	try {
+		const tokenResponse = await fetch (`https://github.com/login/oauth/access_token`, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify ({
+				client_id: process.env.GITHUB_CLIENT_ID,
+				client_secret: process.env.GITHUB_CLIENT_SECRET
+			})
+		});
 
+		const tokens = await tokenResponse.json();
+
+		const [userResponse, emailResponse] = await Promise.all ([
+			fetch (`https://api.github.com/user`, {
+				headers: {
+					Authorization: `Bearer ${tokens.access_token}`,
+					Accept: 'application/json'
+				}
+			}),
+
+			fetch (`https://api.github.com/user/emails`, {
+				headers: {
+					Authorization: `Bearer ${tokens.access_token}`,
+					Accept: 'application/vnd.github+json'
+				}
+			})
+		]);
+
+		const userData = await userResponse.json();
+
+		const email = (await emailResponse.json()).find(e => e.primary)?.email;
+		const username = email.split('@')[0];
+
+		await client.query ('BEGIN');
+
+		const result = await client.query (`INSERT INTO users (username, email, email_verified, oauth2_provider) VALUES ($1, $2, $3, $4) RETURNING id`, [username, email, true, 'github']);
+
+		const userId = result.rows[0].id;
+
+		const {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption} = generateJWTAndCookieOptions (userId);
+
+        await client.query (`update users set refresh_token = $1 where id = $2`, [refreshToken, userId]);
+        await client.query (`COMMIT`);
+
+        return res.status(201)
+                .cookie ('accessToken', accessToken, accessTokenCookieOption)
+                .cookie ('refreshToken', refreshToken, refreshTokenCookieOption)
+                .json ({accessToken, refreshToken, userInfo});
 	}
 	
 	catch (error) {

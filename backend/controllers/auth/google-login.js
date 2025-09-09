@@ -3,14 +3,12 @@ import generateJWTAndCookieOptions from '../../utils/generate-jwt-and-cookie-opt
 
 const googleLogin = async (req, res) => {
 
-	const client = await pool.connect ();
+	const {code} = req.body;
+	const client = await pool.connect();
 
 	try {
-		const {code} = req.body;
 
-		await client.query ('BEGIN');
-
-		const response = await fetch ('https://oauth2.googleapis.com/token', {
+		const tokenResponse = await fetch (`https://oauth2.googleapis.com/token`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded'},
 			body: new URLSearchParams ({
@@ -22,10 +20,10 @@ const googleLogin = async (req, res) => {
 			})
 		});
 
-		const tokens = await response.json();
+		const tokens = await tokenResponse.json();
 
 		const userInfoResponse = await fetch ('https://www.googleapis.com/oauth2/v2/userinfo', {
-			headers: { Authorization: `Bearer ${tokens.access_token}`}
+			headers: { Authorization: `Bearer ${tokens.access_toke}`}
 		});
 
 		const userInfo = await userInfoResponse.json();
@@ -33,6 +31,8 @@ const googleLogin = async (req, res) => {
 		
 		const email = userInfo.email;
 		const username = email.split('@')[0];
+
+		await client.query ('BEGIN');
 
 		const result = await client.query (`INSERT INTO users (username, email, email_verified, oauth2_provider) VALUES ($1, $2, $3, $4) RETURNING id`, [username, email, true, 'google']);
 
