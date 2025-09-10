@@ -4,7 +4,7 @@ import pool from '../../utils/db.js';
 
 async function sendOtp (client, userId, email) {
     
-    const otp = String(Math.floor (1000 + Math.random() * 9000));
+    const otp = String (Math.floor (1000 + Math.random() * 9000));
 
     const transporter = nodemailer.createTransport ({
         secure: true,

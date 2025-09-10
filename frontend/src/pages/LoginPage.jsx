@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import GoogleButton from '../components/GoogleButton';
 import GithubButton from '../components/GithubButton';
 
@@ -15,9 +15,7 @@ export default function LoginPage () {
     e.preventDefault();
     const response = await fetch('http://localhost:4000/api/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ usernameOrEmail, password }),
     });
 
@@ -168,9 +166,9 @@ export default function LoginPage () {
             <div className="text-center mt-6">
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                <a href="#" className="text-violet-600 hover:text-violet-700 font-semibold transition-colors duration-200">
+                <Link to='/register' className="text-violet-600 hover:text-violet-700 font-semibold transition-colors duration-200">
                   Create one here
-                </a>
+                </Link>
               </p>
             </div>
           </div>

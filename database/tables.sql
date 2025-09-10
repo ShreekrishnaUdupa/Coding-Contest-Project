@@ -39,7 +39,7 @@ CREATE TABLE email_otps (
 
 CREATE TABLE contests (
     id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL,
+    code TEXT UNIQUE NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
     rules TEXT,

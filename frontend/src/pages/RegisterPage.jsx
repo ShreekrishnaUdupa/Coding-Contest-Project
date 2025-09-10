@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import GoogleButton from '../components/GoogleButton.jsx';
 import GithubButton from '../components/GithubButton.jsx';
 
@@ -19,9 +19,7 @@ export default function RegisterPage() {
 
     const response = await fetch('http://localhost:4000/api/auth/register', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password }),
     });
 
@@ -49,33 +47,27 @@ export default function RegisterPage() {
       </div>
 
       <div className="relative w-full max-w-md">
+
         {/* Main card */}
         <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 relative overflow-hidden">
-          {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
           
           <div className="relative z-10">
-            {/* Header */}
+
             <div className="text-center mb-8">
-              {/* <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl mb-4 shadow-lg">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-              </div> */}
               <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                 Create Account
               </h1>
             </div>
 
-            {/* Error message */}
             {error && (
               <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
                 <p className="text-red-700 text-sm">{error}</p>
               </div>
             )}
 
-            {/* Form */}
             <div className="space-y-6">
+
               {/* Username field */}
               <div className="relative group">
                 <label className="block text-sm font-semibold text-gray-700 mb-2 transition-all duration-200">
@@ -131,45 +123,44 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-{/* Password field */}
-<div className="relative group">
-  <label className="block text-sm font-semibold text-gray-700 mb-2 transition-all duration-200">
-    Password
-  </label>
-  <div className="relative">
-    <input
-      type={showPassword ? 'text' : 'password'}
-      className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      placeholder="Enter your password"
-    />
-    <button
-      type="button"
-      onClick={() => setShowPassword(!showPassword)}
-      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none"
-    >
-      {showPassword ? (
-        // Eye-off
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M17.94 17.94A10.97 10.97 0 0 1 12 19c-5.523 0-10-4.477-10-10 0-1.485.373-2.888 1.03-4.135M1 1l22 22" />
-          <path d="M10.58 10.58a3 3 0 0 0 4.24 4.24" />
-        </svg>
-      ) : (
-        // Eye
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      )}
-    </button>
-  </div>
-</div>
+              {/* Password field */}
+              <div className="relative group">
+                <label className="block text-sm font-semibold text-gray-700 mb-2 transition-all duration-200">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none"
+                  >
+                    {showPassword ? (
+                      // Eye-off
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.97 10.97 0 0 1 12 19c-5.523 0-10-4.477-10-10 0-1.485.373-2.888 1.03-4.135M1 1l22 22" />
+                        <path d="M10.58 10.58a3 3 0 0 0 4.24 4.24" />
+                      </svg>
+                    ) : (
+                      // Eye
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
 
 
               {/* Submit button */}
               <button
-                type="submit"
                 onClick={handleSubmit}
                 className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 active:scale-[0.98]"
               >
@@ -183,38 +174,41 @@ export default function RegisterPage() {
             </div>
 
             {/* Divider */}
-<div className="mt-8 mb-6">
-  <div className="relative">
-    <div className="absolute inset-0 flex items-center">
-      <div className="w-full border-t border-gray-200"></div>
-    </div>
-    <div className="relative flex justify-center text-sm">
-      <span className="px-4 bg-white text-gray-500">Or sign up with</span>
-    </div>
-  </div>
-</div>
+            <div className="mt-8 mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-gray-500">Or sign up with</span>
+                </div>
+              </div>
+            </div>
 
-<div className="grid grid-cols-2 gap-4">
-  <GoogleButton />
-  <GithubButton />
-</div>
+            <div className="grid grid-cols-2 gap-4">
+              <GoogleButton />
+              <GithubButton />
+            </div>
 
 
             {/* Footer */}
             <div className="mt-8 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
-                <a href="#" className="text-violet-600 hover:text-violet-700 font-semibold transition-colors duration-200">
+                <Link to='/login' className="text-violet-600 hover:text-violet-700 font-semibold transition-colors duration-200">
                   Login
-                </a>
+                </Link>
               </p>
             </div>
+
           </div>
+
         </div>
 
         {/* Additional decorative elements (ones on the top corners) */}
         <div className="absolute -top-4 -left-4 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full opacity-60"></div>
         <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-60"></div>
+        
       </div>
     </div>
   );

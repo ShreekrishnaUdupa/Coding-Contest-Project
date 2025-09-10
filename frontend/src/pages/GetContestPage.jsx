@@ -4,7 +4,7 @@ import Loading from '../components/Loading';
 
 export default function GetContestPage () {
 	
-  const {name} = useParams();
+  const {code} = useParams();
   const navigate = useNavigate();
 
   const [contest, setContest] = useState(null);
@@ -17,7 +17,7 @@ export default function GetContestPage () {
 
     async function fetchContest () {
       try {
-        const response = await fetch (`http://localhost:4000/api/contests/${name}`);
+        const response = await fetch (`http://localhost:4000/api/contests/${code}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -42,8 +42,8 @@ export default function GetContestPage () {
       }
 		}
 
-    if (name) fetchContest();
-  }, [name]);
+    if (code) fetchContest();
+  }, [code]);
 
   useEffect (() => {
 
@@ -73,7 +73,7 @@ export default function GetContestPage () {
   }
 
   function enterContest () {
-    navigate (`/${name}/problems`); 
+    navigate (`/${code}/problems`); 
   }
 
   const hasStarted = timeRemaining === 0;

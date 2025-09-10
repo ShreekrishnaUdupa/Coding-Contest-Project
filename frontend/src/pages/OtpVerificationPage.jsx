@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function OtpVerificationPage () {
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -7,7 +8,9 @@ export default function OtpVerificationPage () {
   const [error, setError] = useState('');
   const inputRefs = [useRef(), useRef(), useRef(), useRef()];
 
-  const email = 'shreekrishnaudupa@gmail.com'
+  const navigate = useNavigate();
+
+  const email = sessionStorage.getItem('email');
 
   const handleInputChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
@@ -53,13 +56,24 @@ export default function OtpVerificationPage () {
     setError('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      if (otpCode === '1234')
-        setIsVerified(true);
-      
-      else
-        setError('Invalid OTP. Please try again.');
+      const response = await fetch('http://localhost:4000/api/auth/otp-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otpCode })
+      });
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (!response.ok) {
+        console.error(data.error);
+        window.alert(data.error);
+        setError(data.error);
+        return;
+      }
+
+      navigate ('/');
     }
     
     catch (error) {

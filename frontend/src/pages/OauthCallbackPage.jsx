@@ -1,14 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function OAuthCallbackPage () {
 
   const navigate = useNavigate();
+  const called = useRef(false);
 
   useEffect (() => {
     const urlParams = new URLSearchParams(window.location.search);
     const provider = urlParams.get('provider');
     const code = urlParams.get('code');
+
+    if (called.current) return;
+    called.current = true;
 
     async function fetchData () {
       try {
