@@ -74,6 +74,8 @@ const githubAuthentication = async (req, res) => {
 		await client.query (`COMMIT`);
 
 		return res.status(201)
+      .clearCookie ('accessToken', {path: '/'})
+      .clearCookie ('refreshToken', {path: '/'})
 			.cookie ('accessToken', accessToken, accessTokenCookieOption)
 			.cookie ('refreshToken', refreshToken, refreshTokenCookieOption)
 			.json ({accessToken, refreshToken});

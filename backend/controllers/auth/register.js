@@ -16,7 +16,7 @@ async function sendOtp (client, userId, email) {
         }
     });
 
-    await transporter.sendMail ({
+    transporter.sendMail ({
         from: `Shreekrishna ${process.env.AUTH_USER}`,
         to: email,
         subject: 'Email Verification OTP',
@@ -29,10 +29,9 @@ async function sendOtp (client, userId, email) {
 const registerUser = async (req, res) => {
 
     const {username, email, password} = req.body;
-    let client;
+    const client = await pool.connect();
 
     try {
-        client = await pool.connect ();
         await client.query ('BEGIN');
 
         const existingUserResult = await client.query ('SELECT username, email FROM users WHERE username = $1 OR email = $2', [username, email]);

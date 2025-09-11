@@ -12,6 +12,8 @@ DROP TYPE IF EXISTS OAUTH2_PROVIDERS;
 DROP TYPE IF EXISTS DIFFICULTY_LEVEL;
 DROP TYPE IF EXISTS ROLES;
 
+select * from users;
+
 DROP INDEX IF EXISTS index_submission_results_submission_id;
 DROP INDEX IF EXISTS index_submissions_user_id_problem_id;
 DROP INDEX IF EXISTS index_test_cases_problem_id;
@@ -106,7 +108,6 @@ CREATE TABLE leaderboards (
     
     PRIMARY KEY (contest_id, user_id)
 ) PARTITION BY LIST (contest_id);
-
 
 CREATE INDEX index_test_cases_problem_id ON test_cases(problem_id);
 CREATE INDEX index_submissions_user_id_problem_id ON submissions (user_id, problem_id);

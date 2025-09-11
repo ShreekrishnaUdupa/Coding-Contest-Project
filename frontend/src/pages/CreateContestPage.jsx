@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateContestPage() {
   const [formData, setFormData] = useState({
@@ -9,7 +10,17 @@ export default function CreateContestPage() {
     startTime: '',
     endTime: ''
   });
+
   const [error, setError] = useState('');
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+  
+  const [startDate, setStartDate] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [endTime, setEndTime] = useState('');
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,11 +30,50 @@ export default function CreateContestPage() {
     }));
   };
 
+  const formatDateTime = (date, time) => {
+    if (!date || !time) return '';
+    return `${date}T${time}`;
+  };
+
+  const handleStartDateTimeChange = (newDate, newTime) => {
+    const date = newDate || startDate;
+    const time = newTime || startTime;
+    setStartDate(date);
+    setStartTime(time);
+    setFormData(prev => ({
+      ...prev,
+      startTime: formatDateTime(date, time)
+    }));
+  };
+
+  const handleEndDateTimeChange = (newDate, newTime) => {
+    const date = newDate || endDate;
+    const time = newTime || endTime;
+    setEndDate(date);
+    setEndTime(time);
+    setFormData(prev => ({
+      ...prev,
+      endTime: formatDateTime(date, time)
+    }));
+  };
+
+  const formatDisplayDateTime = (dateStr, timeStr) => {
+    if (!dateStr || !timeStr) return 'Select date and time';
+    const date = new Date(`${dateStr}T${timeStr}`);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Basic validation
     if (!formData.code.trim()) {
       setError('Contest code is required');
       return;
@@ -32,23 +82,154 @@ export default function CreateContestPage() {
       setError('Contest title is required');
       return;
     }
+    if (!formData.startTime) {
+      setError('Start time is required');
+      return;
+    }
+    if (!formData.endTime) {
+      setError('End time is required');
+      return;
+    }
 
-    console.log('Creating contest with data:', formData);
-    // Add your contest creation logic here
-    
-    // Example API call:
-    // try {
-    //   const response = await fetch('http://localhost:4000/api/contests', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(formData)
-    //   });
-    //   if (response.ok) {
-    //     // Navigate to success page or contest page
-    //   }
-    // } catch (err) {
-    //   setError('Failed to create contest');
-    // }
+    try {
+      const formatToUTC = (localDateTimeString) => {
+        const localDate = new Date(localDateTimeString);
+        return localDate.toISOString();
+      };
+
+      const requestBody = {
+        code: formData.code.trim(),
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        rules: formData.rules.trim(),
+        startTime: formatToUTC(formData.startTime),
+        endTime: formatToUTC(formData.endTime)
+      };
+
+      console.log('Sending contest data:', requestBody);
+
+      const response = await fetch('http://localhost:4000/api/contests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestBody)
+      });
+
+      console.log(response);
+      const data = await response.json();
+
+      if (response.ok) {
+        navigate (`/forgot-password`);
+        
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Failed to create contest');
+      }
+    } catch (err) {
+      console.error('Error creating contest:', err);
+      setError('Network error. Please check if the server is running.');
+    }
+  };
+
+  const CustomDateTimePicker = ({ 
+    isVisible, 
+    onClose, 
+    selectedDate, 
+    selectedTime, 
+    onDateTimeChange, 
+    label,
+    color = "violet" 
+  }) => {
+    const [tempDate, setTempDate] = useState(selectedDate || '');
+    const [tempTime, setTempTime] = useState(selectedTime || '');
+
+    const colorClasses = {
+      violet: {
+        bg: "from-violet-500 to-purple-600",
+        ring: "ring-violet-500",
+        text: "text-violet-600"
+      },
+      red: {
+        bg: "from-red-500 to-rose-600", 
+        ring: "ring-red-500",
+        text: "text-red-600"
+      }
+    };
+
+    const currentColor = colorClasses[color];
+
+    const handleConfirm = () => {
+      onDateTimeChange(tempDate, tempTime);
+      onClose();
+    };
+
+    if (!isVisible) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 max-w-sm w-full mx-4 transform transition-all duration-300 scale-100">
+          <div className="text-center mb-6">
+            <h3 className={`text-xl font-bold bg-gradient-to-r ${currentColor.bg} bg-clip-text text-transparent`}>
+              {label}
+            </h3>
+          </div>
+
+          <div className="space-y-4">
+            {/* Date Selection */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Date
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  value={tempDate}
+                  onChange={(e) => setTempDate(e.target.value)}
+                  className={`w-full px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-2xl focus:outline-none focus:${currentColor.ring} focus:border-transparent transition-all duration-200 font-medium text-gray-700 cursor-pointer hover:from-gray-100 hover:to-gray-150`}
+                />
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                </div>
+              </div>
+            </div>
+
+            {/* Time Selection */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Time
+              </label>
+              <div className="relative">
+                <input
+                  type="time"
+                  value={tempTime}
+                  onChange={(e) => setTempTime(e.target.value)}
+                  className={`w-full px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-2xl focus:outline-none focus:${currentColor.ring} focus:border-transparent transition-all duration-200 font-medium text-gray-700 cursor-pointer hover:from-gray-100 hover:to-gray-150`}
+                />
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex space-x-3 mt-6">
+            <button
+              onClick={onClose}
+              className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-2xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirm}
+              className={`flex-1 px-4 py-3 bg-gradient-to-r ${currentColor.bg} hover:shadow-lg text-white font-semibold rounded-2xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]`}
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -98,13 +279,10 @@ export default function CreateContestPage() {
                       value={formData.code}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
-                      placeholder="e.g., CONTEST2024"
+                      placeholder="e.g. coding-contest"
                       required
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m0 0a2 2 0 01-2 2m2-2h3m-3 0h-3m-2-3a5 5 0 00-10 0v6.5a3.5 3.5 0 007 0V9a2 2 0 012-2z" />
-                      </svg>
                     </div>
                   </div>
                 </div>
@@ -121,13 +299,10 @@ export default function CreateContestPage() {
                       value={formData.title}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
-                      placeholder="e.g., Weekly Coding Challenge"
+                      placeholder="e.g. Weekly Coding Challenge"
                       required
                     />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
                     </div>
                   </div>
                 </div>
@@ -170,16 +345,21 @@ export default function CreateContestPage() {
                     Start Time
                   </label>
                   <div className="relative">
-                    <input
-                      type="datetime-local"
-                      name="startTime"
-                      value={formData.startTime}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowStartPicker(true)}
+                      className="w-full pl-12 pr-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 group-hover:from-gray-100 group-hover:to-gray-150 text-left font-medium text-gray-700 hover:shadow-md transform hover:scale-[1.01]"
+                    >
+                      {formatDisplayDateTime(startDate, startTime)}
+                    </button>
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-6 w-6 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg className="h-5 w-5 text-gray-400 transform transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
                   </div>
@@ -191,16 +371,21 @@ export default function CreateContestPage() {
                     End Time
                   </label>
                   <div className="relative">
-                    <input
-                      type="datetime-local"
-                      name="endTime"
-                      value={formData.endTime}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 group-hover:bg-gray-100"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowEndPicker(true)}
+                      className="w-full pl-12 pr-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 group-hover:from-gray-100 group-hover:to-gray-150 text-left font-medium text-gray-700 hover:shadow-md transform hover:scale-[1.01]"
+                    >
+                      {formatDisplayDateTime(endDate, endTime)}
+                    </button>
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg className="h-5 w-5 text-gray-400 transform transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
                   </div>
@@ -224,15 +409,6 @@ export default function CreateContestPage() {
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="mt-8 text-center">
-              <p className="text-sm text-gray-600">
-                Need help?{' '}
-                <a href="#" className="text-violet-600 hover:text-violet-700 font-semibold transition-colors duration-200">
-                  View contest guidelines
-                </a>
-              </p>
-            </div>
           </div>
         </div>
 
@@ -240,6 +416,27 @@ export default function CreateContestPage() {
         <div className="absolute -top-4 -left-4 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full opacity-60"></div>
         <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-60"></div>
       </div>
+
+      {/* Custom Date Time Pickers */}
+      <CustomDateTimePicker
+        isVisible={showStartPicker}
+        onClose={() => setShowStartPicker(false)}
+        selectedDate={startDate}
+        selectedTime={startTime}
+        onDateTimeChange={handleStartDateTimeChange}
+        label="Contest Start Time"
+        color="violet"
+      />
+
+      <CustomDateTimePicker
+        isVisible={showEndPicker}
+        onClose={() => setShowEndPicker(false)}
+        selectedDate={endDate}
+        selectedTime={endTime}
+        onDateTimeChange={handleEndDateTimeChange}
+        label="Contest End Time"
+        color="red"
+      />
     </div>
   );
 }

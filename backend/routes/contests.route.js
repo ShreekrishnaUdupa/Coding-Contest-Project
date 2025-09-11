@@ -7,7 +7,7 @@ import getContest from '../controllers/contests/get-contest.js';
 const router = express.Router();
 
 router.post ('/', verifyToken, createContest);
-router.get ('/:contestName', getContest);
+router.get ('/code/:contestCode', getContest);
 router.post ('/register', verifyToken, registerForContest);
 
 export default router;

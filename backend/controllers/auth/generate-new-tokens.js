@@ -25,6 +25,8 @@ const generateNewTokens = async (req, res) => {
 
         return res
             .status (201)
+            .clearCookie ('accessToken', {path: '/'})
+            .clearCookie ('refreshToken', {path: '/'})
             .cookie ('accessToken', accessToken, accessTokenCookieOption)
             .cookie ('refreshToken', refreshToken, refreshTokenCookieOption)
             .json({accessToken, refreshToken: refreshToken})

@@ -12,6 +12,7 @@ export default function LoginPage () {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     const response = await fetch('http://localhost:4000/api/auth/login', {
       method: 'POST',
@@ -27,7 +28,7 @@ export default function LoginPage () {
       setError(data.error);
     }
 
-    // add logic here
+    navigate ('/');
   };
 
   return (

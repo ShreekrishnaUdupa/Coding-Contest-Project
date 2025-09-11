@@ -17,14 +17,18 @@ const generateJWTAndCookieOptions = (id) => {
 
     const accessTokenCookieOption = {
         httpOnly: true,
-        secure: true,
-        maxAge: ms (process.env.ACCESS_TOKEN_EXPIRY)
+        secure: false,
+        maxAge: ms (process.env.ACCESS_TOKEN_EXPIRY),
+        sameSite: 'lax',
+        path: '/'
     }
 
     const refreshTokenCookieOption = {
         httpOnly: true,
-        secure: true,
-        maxAge: ms (process.env.REFRESH_TOKEN_EXPIRY)
+        secure: false,
+        maxAge: ms (process.env.REFRESH_TOKEN_EXPIRY),
+        sameSite: 'lax',
+        path: '/'
     }
 
     return {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption};

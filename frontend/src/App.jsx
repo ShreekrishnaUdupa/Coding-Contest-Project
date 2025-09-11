@@ -3,7 +3,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import OtpVerificationPage from "./pages/OtpVerificationPage";
-import OAuthCallbackPage from "./pages/OauthCallbackPage";
+import OAuthCallbackPage from "./pages/OAuthCallbackPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import CreateContestPage from "./pages/CreateContestPage";
 import GetContestPage from "./pages/GetContestPage";
@@ -22,7 +22,7 @@ export default function App() {
         <Route path='/oauth/callback' element={<OAuthCallbackPage />} />
         <Route path='forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/contests/create' element={<CreateContestPage />} />
-        <Route path='/:name' element={<GetContestPage />} />
+        <Route path='/:contestCode' element={<GetContestPage />} />
         <Route path='/contests/id/:contestId/problems' element={<GetProblemsPage />} />
         <Route path='/contests/id/:contestId/problems/number/:problemNo' element={< ProblemPage />} />
 			</Routes>

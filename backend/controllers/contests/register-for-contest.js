@@ -6,6 +6,9 @@ const registerForContest = async (req, res) => {
         const {contestId} = req.body;
         const userId = req.user.id;
 
+        console.log(contestId);
+        console.log(userId);
+
         await pool.query('INSERT INTO contest_user_roles (contest_id, user_id) VALUES ($1, $2);', [contestId, userId]);
 
         return res.status(201).end();

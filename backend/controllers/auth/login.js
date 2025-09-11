@@ -5,10 +5,9 @@ import generateJWTAndCookieOptions from '../../utils/generate-jwt-and-cookie-opt
 const loginUser = async (req, res) => {
 
     const {usernameOrEmail, password} = req.body;
-    let client;
+    const client = await pool.connect();
 
     try {
-        client = await pool.connect ();
         client.query ('BEGIN');
 
         const result = await client.query (`Select id, hashed_password from users where (username = $1 or email = $1) and email_verified = true`, [usernameOrEmail]);
@@ -31,6 +30,8 @@ const loginUser = async (req, res) => {
         await client.query (`COMMIT`);
 
         return res.status(201)
+                .clearCookie ('accessToken', {path: '/'})
+                .clearCookie ('refreshToken', {path: '/'})
                 .cookie ('accessToken', accessToken, accessTokenCookieOption)
                 .cookie ('refreshToken', refreshToken, refreshTokenCookieOption)
                 .json ({accessToken, refreshToken});

@@ -2,10 +2,10 @@ import pool from '../../utils/db.js';
 
 const getContest = async (req, res) => {
 
-    const {contestName} = req.params;
+    const {contestCode} = req.params;
 
     try {
-        const results = await pool.query (`SELECT id, title, description, rules, start_time, end_time from contests where name = $1`, [contestName]);
+        const results = await pool.query (`SELECT id, title, description, rules, start_time, end_time from contests where code = $1`, [contestCode]);
 
         if (results.rows.length === 0)
           return res.status(404).json({error: 'Error 404, contest not found'});
