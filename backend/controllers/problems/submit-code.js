@@ -23,21 +23,27 @@ const submitCode = (io) => async (req, res) => {
 
         const results = await executeCode (language, code, testCases);
 
-        const insertPromises = results.map ((value, index) => {
-            return client.query (
-                `INSERT INTO submission_results (submission_id, test_case_id, passed) VALUES ($1, $2, $3)`,
-                [submissionId, testCases[index].id, value.passed]
-            )
-        });
+        if (results.length > 0)
+        {
+            const values = [];
+            const placeholders = [];
 
-        await Promise.all(insertPromises);
+            results.forEach ((result, index) => {
+
+                const placeholderStart = index * 3 + 1;
+                placeholders.push(`($${placeholderStart}, $${placeholderStart + 1}, $${placeholderStart + 2})`);
+
+                values.push (submissionId, testCases[index].id, result.passed);
+            });
+
+            await client.query (`INSERT INTO submission_results (submission_id, test_case_id, passed) VALUES ${placeholders.join(', ')}`, values);
+        }
 
         await client.query (`CALL update_leaderboards_procedure ($1)`, [submissionId]);
-        
-        await client.query('COMMIT');
+		await client.query('COMMIT');
 
-        res.status(201).json(results);
-
+		res.status(201).json(results);
+		        
         const {rows: updatedLeaderboard} = await client.query (
 			`SELECT u.username, l.total_points, l.total_submissions
 			FROM leaderboards l

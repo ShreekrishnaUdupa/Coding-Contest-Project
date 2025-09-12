@@ -96,7 +96,6 @@ CREATE TABLE submissions (
     total_test_cases INT DEFAULT 0
 );
 
-select * from contest_user_roles;
 CREATE TABLE submission_results (
     id SERIAL PRIMARY KEY,
     submission_id int REFERENCES submissions(id) ON DELETE CASCADE,

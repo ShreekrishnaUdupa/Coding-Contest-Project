@@ -3,7 +3,7 @@ import pool from '../../utils/db.js';
 const getLeaderboard = (io) => {
 
     io.on ('connection', (socket) => {
-        console.log('Client connected: ', socket.id);
+        console.log('Client connected:', socket.id);
 
         socket.on ('get-leaderboard', async (contestId) => {
             try {
@@ -24,7 +24,7 @@ const getLeaderboard = (io) => {
         });
 
         socket.on ('disconnect', () => {
-            console.log('Client disconnected: ', socket.id);
+            console.log('Client disconnected:', socket.id);
         });
     });
 };

@@ -19,6 +19,8 @@ router.get ('/id/:problemId', verifyToken, verifyRole, getProblem);
 router.get ('/id/:problemId/submissions/recent', verifyToken, verifyRole, getRecentSubmission);
 router.get ('/id/:problemId/submissions', verifyToken, verifyRole, getAllSubmissions);
 router.post ('/id/:problemId/run', verifyToken, verifyRoleParticipant, runCode);
-router.post ('/id/:problemId/submissions', verifyToken, verifyRoleParticipant, submitCode);
 
-export default router;
+export default (io) => {
+    router.post ('/id/:problemId/submissions', verifyToken, verifyRoleParticipant, submitCode(io));
+    return router;
+}
