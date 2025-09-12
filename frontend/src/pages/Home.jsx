@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Homepage () {
+export default function Home () {
   const [contestCode, setContestCode] = useState('');
   const navigate = useNavigate();
 

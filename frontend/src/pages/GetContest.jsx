@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Loading from '../components/Loading';
 
-export default function GetContestPage () {
+export default function GetContest () {
 	
   const {contestCode} = useParams();
   const navigate = useNavigate();

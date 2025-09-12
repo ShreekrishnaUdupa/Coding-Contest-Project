@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 
-export default function ProblemsPage () {
+export default function GetProblem () {
   
   const [number, setNumber] = useState(0);
   const [title, setTitle] = useState('');

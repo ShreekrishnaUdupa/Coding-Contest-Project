@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function CreateContestPage() {
+export default function CreateContest () {
   const [formData, setFormData] = useState({
     code: '',
     title: '',

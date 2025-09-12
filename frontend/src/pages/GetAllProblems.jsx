@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 
-export default function GetProblemsPage () {
+export default function GetAllProblems () {
 
   const {name: contestName} = useParams();
   const navigate = useNavigate();

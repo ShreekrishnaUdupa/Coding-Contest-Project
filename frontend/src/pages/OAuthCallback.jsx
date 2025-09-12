@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function OAuthCallbackPage () {
+export default function OAuthCallback () {
 
   const navigate = useNavigate();
   const called = useRef(false);
