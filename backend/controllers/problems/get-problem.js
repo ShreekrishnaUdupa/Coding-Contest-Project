@@ -1,20 +1,22 @@
 import pool from '../../utils/db.js';
 
 const getProblem = async (req, res) => {
+
+	const {contestId, problemId} = req.params;
+    const client = await pool.connect();
+
     try {
-		const {problemId} = req.params;
+		const problemResult = await client.query (`SELECT id, difficulty, title, statement, constraints, total_points FROM problems WHERE contest_id = $1 AND id = $2`, [contestId, problemId]);
 
-        const result = await pool.query (`SELECT number, title, difficulty, statement, input_format, output_format, constraints FROM problems WHERE problem_id = $1`, [problemId]);
+        const sampleTestCasesResult = await client.query (`SELECT id, input, expected_output FROM test_cases WHERE problem_id = $1 AND is_sample = true`, [problemId]);
 
-		return res.status(200).json({
-			number: result.rows[0].number,
-			title: result.rows[0].title,
-			difficulty: result.rows[0].difficulty,
-			statement: result.rows[0].statement,
-			inputFormat: result.rows[0].input_format,
-			outputFormat: result.rows[0].output_format,
-			constraints: result.rows[0].constraints
-		});
+        const problem = problemResult.rows[0];
+        problem.totalPoints = problem.total_points;
+        delete problem.total_points;
+        
+        problem.sampleTestCases = sampleTestCasesResult.rows;
+
+		return res.status(200).json(problem);
     }
 
     catch (error) {

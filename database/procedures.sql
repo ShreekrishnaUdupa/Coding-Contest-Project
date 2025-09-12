@@ -8,7 +8,7 @@ DECLARE
 	v_submission_points FLOAT;
 	v_best_points FLOAT;
 BEGIN
-	SELECT user_id, problem_id, points
+	SELECT user_id, problem_id, points_scored
 	INTO v_user_id, v_problem_id, v_submission_points
 	FROM submissions
 	WHERE id = p_submission_id;
@@ -18,7 +18,7 @@ BEGIN
 	FROM problems
 	WHERE id = v_problem_id;
 
-	SELECT COALESCE (MAX(points), 0)
+	SELECT COALESCE (MAX(points_scored), 0)
 	INTO v_best_points
 	FROM submissions
 	WHERE user_id = v_user_id

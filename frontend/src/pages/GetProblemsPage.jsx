@@ -10,10 +10,10 @@ export default function GetProblemsPage () {
 
   useEffect (() => {
     
-    const response = fetch (`http://localhost:4000/api/problems/${contestName}`);
-    const data = response.json();
+    // const response = fetch (`http://localhost:4000/api/contests/id/problems/${contestName}`);
+    // const data = response.json();
 
-    console.log(data);
+    // console.log(data);
 
   }, [contestName]);
   

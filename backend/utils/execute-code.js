@@ -51,7 +51,7 @@ function executeInDocker (containerName, command, stdin) {
         const timer = setTimeout (() => {
             killedByTimeout = true;
             child.kill('SIGKILL');
-        }, (3000));
+        }, (6000));
 
         child.stdout.on ('data', (data) => (stdout += data.toString()));
         child.stderr.on ('data', (data) => (stderr += data.toString()));
@@ -105,32 +105,33 @@ const executeCode = async (language, code, testCases) => {
 
     catch (error) {
 
-        for (let i = 0; i < testCases.length; ++i)
-            results.push ({
-                passed: false,
-                error: 'Compilation failed',
-                details: error.details || error.error
-            });
-
-        return results;
+        return testCases.map((tc) => ({
+            input: tc.input,
+            expectedOutput: tc.expected_output,
+            actualOutput: '',
+            passed: false,
+            error: error.details || error.error
+        }));
     }
 
     for (const testCase of testCases) {
         try {
             const stdout = await executeInDocker (containerName, runCommand, testCase.input);
-            
             const actualOutput = stdout.trim();
-            const expectedOutput = testCase.expected_output.trim();
 
             results.push ({
+                input: testCase.input,
+                expectedOutput: testCase.expected_output.trim(),
                 actualOutput,
-                expectedOutput,
-                passed: actualOutput === expectedOutput,
+                passed: actualOutput === testCase.expected_output.trim(),
             });
         }
 
         catch (error) {
             results.push ({
+                input: testCase.input,
+                expectedOutput: testCase.expected_output.trim(),
+                actualOutput: '',
                 passed: false,
                 error: error.error || 'Runtime Error',
                 details: error.details || ''

@@ -4,14 +4,15 @@ import executeCode from '../../utils/execute-code.js';
 const submitCode = async (req, res) => {
 
     const client = await pool.connect();
+    const {problemId} = req.params;
 
-    const {problemId, language, code} = req.body;
+    const {language, code} = req.body;
     const userId = req.user.id;
 
     try {
         await client.query('BEGIN');
 
-        const insertResult = await client.query (`INSERT INTO submissions (user_id, problem_id, code) VALUES ($1, $2, $3) RETURNING ID`, [userId, problemId, code]);
+        const insertResult = await client.query (`INSERT INTO submissions (user_id, problem_id, language, code) VALUES ($1, $2, $3, $4) RETURNING ID`, [userId, problemId, language, code]);
 
         const submissionId = insertResult.rows[0].id;
 
@@ -22,11 +23,14 @@ const submitCode = async (req, res) => {
 
         const results = await executeCode (language, code, testCases);
 
-        const values = results.map ((value, index) =>
-            `(${submissionId}, ${testCases[index].id}, ${value.passed})`
-        ).join(',');
+        const insertPromises = results.map ((value, index) => {
+            return client.query (
+                `INSERT INTO submission_results (submission_id, test_case_id, passed) VALUES ($1, $2, $3)`,
+                [submissionId, testCases[index].id, value.passed]
+            )
+        });
 
-        await client.query (`INSERT INTO submission_results (submission_id, test_case_id, passed) VALUES ${values}`);
+        await Promise.all(insertPromises);
 
         await client.query (`CALL update_leaderboards_procedure ($1)`, [submissionId]);
         

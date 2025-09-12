@@ -12,7 +12,7 @@ DROP TYPE IF EXISTS OAUTH2_PROVIDERS;
 DROP TYPE IF EXISTS DIFFICULTY_LEVEL;
 DROP TYPE IF EXISTS ROLES;
 
-select * from users;
+select * from contest
 
 DROP INDEX IF EXISTS index_submission_results_submission_id;
 DROP INDEX IF EXISTS index_submissions_user_id_problem_id;
@@ -30,6 +30,8 @@ CREATE TABLE users (
     refresh_token TEXT,
     created_at TIMESTAMPTZ DEFAULT current_timestamp
 );
+
+select * from
 
 CREATE TABLE email_otps (
     id SERIAL PRIMARY KEY,
@@ -86,13 +88,15 @@ CREATE TABLE submissions (
     id SERIAL PRIMARY KEY,
     user_id UUID,
     problem_id INT REFERENCES problems(id) ON DELETE CASCADE,
+	language VARCHAR(20),
     code TEXT,
-    points FLOAT DEFAULT 0,
+    points_scored FLOAT DEFAULT 0,
     total_points FLOAT DEFAULT 0,
     test_cases_passed INT DEFAULT 0,
     total_test_cases INT DEFAULT 0
 );
 
+select * from contest_user_roles;
 CREATE TABLE submission_results (
     id SERIAL PRIMARY KEY,
     submission_id int REFERENCES submissions(id) ON DELETE CASCADE,

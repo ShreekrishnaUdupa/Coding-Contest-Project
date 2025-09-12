@@ -9,7 +9,7 @@ const registerForContest = async (req, res) => {
         console.log(contestId);
         console.log(userId);
 
-        await pool.query('INSERT INTO contest_user_roles (contest_id, user_id) VALUES ($1, $2);', [contestId, userId]);
+        await pool.query('INSERT INTO contest_user_roles (contest_id, user_id) VALUES ($1, $2) ON CONFLICT (contest_id, user_id) DO NOTHING;', [contestId, userId]);
 
         return res.status(201).end();
     }

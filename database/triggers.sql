@@ -73,7 +73,7 @@ BEGIN
         total_test_cases = total_test_cases + 1,
         total_points = total_points + tc_points,
         test_cases_passed = test_cases_passed + CASE WHEN NEW.passed THEN 1 ELSE 0 END,
-        points = points + CASE WHEN NEW.passed THEN tc_points ELSE 0 END
+        points_scored = points_scored + CASE WHEN NEW.passed THEN tc_points ELSE 0 END
     WHERE id = NEW.submission_id;
     
     RETURN NEW;

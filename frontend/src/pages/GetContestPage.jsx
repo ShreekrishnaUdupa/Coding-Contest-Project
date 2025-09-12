@@ -81,7 +81,13 @@ export default function GetContestPage () {
           body: JSON.stringify ({contestId: contest.id})
         });
 
-        console.log(response);
+        if (!response.ok) {
+          console.error(error);
+          window.alert(error);
+          return;
+        }
+
+        navigate (`/contests/id/${contest.id}/problems`);
     }
 
     catch (error) {
