@@ -11,7 +11,6 @@ import GetAllProblems from "./pages/GetAllProblems";
 import GetProblem from "./pages/GetProblem";
 
 export default function App() {
-
   return (
 		<BrowserRouter>
       <Routes>
