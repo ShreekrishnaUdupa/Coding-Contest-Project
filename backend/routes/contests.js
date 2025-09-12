@@ -4,13 +4,11 @@ import verifyRole from '../middleware/verify-role.js';
 import createContest from '../controllers/contests/create-contest.js';
 import registerForContest from '../controllers/contests/register-for-contest.js';
 import getContest from '../controllers/contests/get-contest.js';
-import getLeaderboard from '../controllers/contests/get-leaderboard.js';
 
 const router = express.Router();
 
 router.post ('/', verifyToken, createContest);
 router.get ('/code/:contestCode', getContest);
 router.post ('/register', verifyToken, registerForContest);
-router.get ('/id/:contestId/leaderboard', verifyToken, verifyRole, getLeaderboard);
 
 export default router;
