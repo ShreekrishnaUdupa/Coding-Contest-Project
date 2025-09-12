@@ -11,7 +11,7 @@ import authRoute from './routes/auth.js';
 import contestsRoute from './routes/contests.js';
 import problemsRoute from './routes/problems.js';
 
-import getLeaderboard from './controllers/contests/get-leaderboard.js';
+import getLeaderboard from './controllers/leaderboard/get-leaderboard.js';
 
 const app = express ();
 
@@ -32,6 +32,6 @@ const io = new Server (server, {
 
 getLeaderboard(io);
 
-app.listen(4000, () => {
+server.listen(4000, () => {
     console.log("Server running on port 4000");
 });

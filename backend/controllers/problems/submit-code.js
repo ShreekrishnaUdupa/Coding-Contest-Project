@@ -1,10 +1,10 @@
 import pool from '../../utils/db.js';
 import executeCode from '../../utils/execute-code.js';
 
-const submitCode = async (req, res) => {
+const submitCode = (io) => async (req, res) => {
 
     const client = await pool.connect();
-    const {problemId} = req.params;
+    const {contestId, problemId} = req.params;
 
     const {language, code} = req.body;
     const userId = req.user.id;
@@ -36,7 +36,18 @@ const submitCode = async (req, res) => {
         
         await client.query('COMMIT');
 
-        return res.status(201).json(results);
+        res.status(201).json(results);
+
+        const {rows: updatedLeaderboard} = await client.query (
+			`SELECT u.username, l.total_points, l.total_submissions
+			FROM leaderboards l
+			JOIN users u ON u.id = l.user_id
+			WHERE l.contest_id = $1
+			ORDER BY l.total_points DESC, l.total_submissions ASC`,
+			[contestId]
+        );
+
+		io.emit (`leaderboard-update-${contestId}`, updatedLeaderboard);
     }
 
     catch (error) {

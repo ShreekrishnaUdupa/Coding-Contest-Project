@@ -9,6 +9,7 @@ import CreateContest from "./pages/CreateContest";
 import GetContest from "./pages/GetContest";
 import GetAllProblems from "./pages/GetAllProblems";
 import GetProblem from "./pages/GetProblem";
+import GetLeaderboard from "./pages/GetLeaderBoard";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path='/:contestCode' element={<GetContest />} />
         <Route path='/contests/id/:contestId/problems' element={<GetAllProblems />} />
         <Route path='/contests/id/:contestId/problems/number/:problemNo' element={< GetProblem />} />
+        <Route path='/contests/id/:contestId/leaderboard' element={<GetLeaderboard />} />
 			</Routes>
 		</BrowserRouter>
   );

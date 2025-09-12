@@ -3,10 +3,7 @@ import pool from '../utils/db.js';
 const verifyRoleOrganizerOrModerator = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        let contestId;
-
-        if (req.body.contestId) contestId = req.body.contestId;
-        else contestId = req.params.contestId;
+        const contestId = req.params.contestId;
 
         const results = await pool.query (`SELECT role FROM contest_user_roles WHERE user_id = $1 AND contest_id = $2`, [userId, contestId]);
 
