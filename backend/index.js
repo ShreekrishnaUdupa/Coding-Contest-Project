@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -27,7 +24,7 @@ app.use (express.json());
 app.use (cookieParser());
 
 app.use ('/api/auth', authRoute);
-app.use ('/api/contests', contestsRoute);
+app.use ('/api/contests', contestsRoute(io));
 app.use ('/api/contests/id/:contestId/problems', problemsRoute(io));
 
 getLeaderboard(io);

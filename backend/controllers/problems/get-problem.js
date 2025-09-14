@@ -16,7 +16,7 @@ const getProblem = async (req, res) => {
         
         problem.sampleTestCases = sampleTestCasesResult.rows;
 
-		return res.status(200).json(problem);
+		return res.status(200).json({role: req.user.role, problem});
     }
 
     catch (error) {

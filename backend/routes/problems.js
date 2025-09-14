@@ -23,4 +23,4 @@ router.post ('/id/:problemId/run', verifyToken, verifyRoleParticipant, runCode);
 export default (io) => {
     router.post ('/id/:problemId/submissions', verifyToken, verifyRoleParticipant, submitCode(io));
     return router;
-}
+};

@@ -12,6 +12,8 @@ const verifyRole = async (req, res, next) => {
         if (!role)
             return res.status(401).json({error: 'Unauthorized access'});
 
+        req.user.role = role;
+
         next ();
     }
 

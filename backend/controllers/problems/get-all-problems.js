@@ -6,7 +6,7 @@ const getAllProblems = async (req, res) => {
 
 		const results  = await pool.query (`SELECT id, title, difficulty, total_points FROM problems WHERE contest_id = $1`, [contestId]);
 
-		return res.status(200).json(results.rows);
+		return res.status(200).json({role: req.user.role, problems: results.rows});
 	}
 
 	catch (error) {
