@@ -24,7 +24,7 @@ export default function App() {
         <Route path='/contests/create' element={<CreateContest />} />
         <Route path='/:contestCode' element={<GetContest />} />
         <Route path='/contests/id/:contestId/problems' element={<GetAllProblems />} />
-        <Route path='/contests/id/:contestId/problems/number/:problemNo' element={< GetProblem />} />
+        <Route path='/contests/id/:contestId/problems/id/:problemId' element={< GetProblem />} />
         <Route path='/contests/id/:contestId/leaderboard' element={<GetLeaderboard />} />
 			</Routes>
 		</BrowserRouter>
