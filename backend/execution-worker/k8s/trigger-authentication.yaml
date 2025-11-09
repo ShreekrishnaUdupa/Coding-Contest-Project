@@ -1,0 +1,16 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: execution-trigger-authentication
+  namespace: execution
+spec:
+  secretTargetRef:
+    - parameter: host
+      name: execution-env
+      key: RABBITMQ_HOST
+    - parameter: username
+      name: execution-env
+      key: RABBITMQ_USER
+    - parameter: password
+      name: execution-env
+      key: RABBITMQ_PASSWORD

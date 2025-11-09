@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: execution-worker
+  namespace: execution
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: execution-worker
+  template:
+    metadata:
+      labels:
+        app: execution-worker
+    spec:
+      containers:
+        - name: execution-worker
+          image: execution:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: execution-env
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          securityContext:
+            privileged: true

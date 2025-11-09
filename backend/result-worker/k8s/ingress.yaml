@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: result-ingress
+  namespace: result
+  annotations:
+    nginx.org/websocket-services: "result-worker"
+spec:
+  rules:
+    - host: backend.anial.in
+      http:
+        paths:
+          - path: /ws-result
+            pathType: Prefix
+            backend:
+              service:
+                name: result-worker
+                port:
+                  number: 5000

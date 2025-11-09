@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-worker
+  namespace: result
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result-worker
+  template:
+    metadata:
+      labels:
+        app: result-worker
+    spec:
+      containers:
+        - name: result-worker
+          image: result:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: result-env
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000

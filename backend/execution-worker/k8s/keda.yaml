@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: execution-keda
+  namespace: execution
+spec:
+  scaleTargetRef:
+    name: execution-worker
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  pollingInterval: 30
+  cooldownPeriod: 300
+  triggers:
+    - type: rabbitmq
+      metadata:
+        queueName: execution_queue
+        queueLength: "5"
+      authenticationRef:
+        name: execution-trigger-authentication
