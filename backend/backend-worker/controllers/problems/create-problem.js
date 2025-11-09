@@ -36,7 +36,7 @@ const createProblem = async (req, res) => {
 
         const {rows: allProblems} = await client.query (`SELECT id, title, difficulty, total_points FROM problems WHERE contest_code = $1`, [contestCode]);
 
-        redisClient.set (`${contestCode}-problems`, JSON.stringify(allProblems));
+        await redisClient.set (`${contestCode}-problems`, JSON.stringify(allProblems));
     }
     
     catch (error) {

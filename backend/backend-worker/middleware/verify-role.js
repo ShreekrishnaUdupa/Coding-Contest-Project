@@ -8,12 +8,10 @@ const verifyRole = async (req, res, next) => {
 
         const results = await pool.query (`Select role from contest_user_roles where user_id = $1 AND contest_code = $2`, [userId, contestCode]);
 
-        const role = results.rows[0].role;
-
-        if (!role)
+        if (results.rows.length === 0)
             return res.status(401).json({error: 'Unauthorized access'});
 
-        req.user.role = role;
+        req.user.role = results.rows[0].role;
 
         next ();
     }

@@ -14,11 +14,11 @@ const getAllProblems = async (req, res) => {
             return res.status(200).json({role: req.user.role, problems: parsedData});
         }
 
-		const results  = await pool.query (`SELECT id, title, difficulty, total_points FROM problems WHERE contest_code = $1`, [contestCode]);
+		const results  = await pool.query (`SELECT id, title, difficulty, total_points as "totalPoints" FROM problems WHERE contest_code = $1`, [contestCode]);
 
 		res.status(200).json({role: req.user.role, problems: results.rows});
 
-        redisClient.set (`${contestCode}-problems`, results.rows);
+        await redisClient.set (`${contestCode}-problems`, JSON.stringify(results.rows));
 	}
 
 	catch (error) {

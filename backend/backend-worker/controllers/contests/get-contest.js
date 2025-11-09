@@ -1,4 +1,4 @@
-import {getShardDBPool} from '../../routes/utils/get-db-pool.js';
+import {getShardDBPool} from '../../utils/get-db-pool.js';
 
 const getContest = async (req, res) => {
 

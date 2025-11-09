@@ -1,7 +1,10 @@
+import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import {io } from 'socket.io-client';
 import { Play, Send, Code, List, Check, X, Clock } from 'lucide-react';
 
 export default function ProblemSolvingPage() {
+  const { contestCode, problemId } = useParams();
   const [problem, setProblem] = useState(null);
   const [role, setRole] = useState('participant');
   const [loading, setLoading] = useState(true);
@@ -11,14 +14,13 @@ export default function ProblemSolvingPage() {
   const [selectedLanguage, setSelectedLanguage] = useState('python');
   const [code, setCode] = useState('');
   const [activeTab, setActiveTab] = useState('code'); // 'code' or 'submissions'
+  const [testResult, setTestResult] = useState([]);
+  const [submissionResult, setSubmissionResult] = useState([]);
+  const [loadingResult, setLoadingResult] = useState(false);
   
   // Submissions state
   const [submissions, setSubmissions] = useState([]);
   const [submissionsLoading, setSubmissionsLoading] = useState(false);
-
-  // Mock contest and problem IDs
-  const contestId = "5";
-  const problemId = "3";
 
   const languages = {
     c: {
@@ -27,19 +29,19 @@ export default function ProblemSolvingPage() {
     },
     cpp: {
       name: 'C++',
-      defaultCode: '#include <iostream>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}'
+      defaultCode: '#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // Your code here\n    return 0;\n}'
     },
     java: {
       name: 'Java',
-      defaultCode: 'public class Solution {\n    public static void main(String[] args) {\n        // Your code here\n    }\n}'
+      defaultCode: 'public class Main {\n    public static void main (String args[]) {\n        // Your code here\n    }\n}'
     },
-    python: {
+    py: {
       name: 'Python',
-      defaultCode: '# Your code here\na = int(input())\nb = int(input())\nprint(a + b)'
+      defaultCode: '# Your code here\n\n'
     },
-    javascript: {
+    js: {
       name: 'JavaScript',
-      defaultCode: '// Your code here\nconst readline = require("readline");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    output: process.stdout\n});'
+      defaultCode: '// Your code here\n\n'
     }
   };
 
@@ -76,60 +78,96 @@ export default function ProblemSolvingPage() {
   const mockSubmissions = [
     {
       "id": 31,
-      "points_scored": 10,
-      "total_points": 10,
-      "test_cases_passed": 2,
-      "total_test_cases": 2
+      "pointsScored": 10,
+      "totalPoints": 10,
+      "testCasesPassed": 2,
+      "totalTestCases": 2
     },
     {
       "id": 30,
-      "points_scored": 10,
-      "total_points": 10,
-      "test_cases_passed": 2,
-      "total_test_cases": 2
+      "pointsScored": 10,
+      "totalPoints": 10,
+      "testCasesPassed": 2,
+      "totalTestCases": 2
     },
     {
       "id": 29,
-      "points_scored": 0,
-      "total_points": 10,
-      "test_cases_passed": 0,
-      "total_test_cases": 2
+      "pointsScored": 0,
+      "totalPoints": 10,
+      "testCasesPassed": 0,
+      "totalTestCases": 2
     },
     {
       "id": 28,
-      "points_scored": 5,
-      "total_points": 10,
-      "test_cases_passed": 1,
-      "total_test_cases": 2
+      "pointsScored": 5,
+      "totalPoints": 10,
+      "testCasesPassed": 1,
+      "totalTestCases": 2
     }
   ];
 
   useEffect(() => {
-    // Simulate API calls
-    setTimeout(() => {
-      setProblem(mockProblem.problem);
-      setRole(mockProblem.role);
-      
-      // Set recent submission or default code
-      if (mockRecentSubmission) {
-        setSelectedLanguage(mockRecentSubmission.language);
-        setCode(mockRecentSubmission.code);
-      } else {
-        setCode(languages[selectedLanguage].defaultCode);
+
+    const loadData = async () => {
+      try {
+        const problemResponse = await fetch (`http://localhost:4000/api/contests/${contestCode}/problems/${problemId}`, {credentials: 'include'});
+
+        if (!problemResponse.ok) throw new Error ('Failed to fetch problem');
+        const problemData = await problemResponse.json();
+
+        setProblem(problemData.problem);
+        setRole (problemData.role);
+
+        const submissionResponse = await fetch (`http://localhost:4000/api/contests/${contestCode}/problems/${problemId}/submissions/latest`, {credentials: 'include'});
+
+        if (submissionResponse.status === 204) {
+          setSelectedLanguage('py');
+          setCode(languages['py'].defaultCode);
+        }
+
+        else {
+          const latest = await submissionResponse.json();
+          setSelectedLanguage(latest.language);
+          setCode(latest.code);
+        }
       }
       
+      catch (error) {
+        setError (error.message);
+      }
+
       setLoading(false);
-    }, 1000);
-  }, []);
+    };
+
+    loadData();
+  }, [contestCode, problemId]);
 
   const fetchSubmissions = async () => {
-    if (activeTab === 'submissions' && submissions.length === 0) {
-      setSubmissionsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        setSubmissions(mockSubmissions);
-        setSubmissionsLoading(false);
-      }, 500);
+
+    if (activeTab !== 'submissions' || submissions.length > 0) return;
+
+    setSubmissionsLoading(true);
+
+    try {
+      const response = await fetch (`http://localhost:4000/api/contests/${contestCode}/problems/${problemId}/submissions`, {credentials: 'include'});
+
+      if (!response.ok) throw new Error ('Failed to fetch submissions');
+
+      const data = await response.json();
+
+      setSubmissions (data.map (s => ({
+        id: s.id,
+        pointsScored: s.pointsScored,
+        totalPoints: s.totalPoints,
+        testCasesPassed: s.testCasesPassed,
+        totalTestCases: s.totalTestCases
+     })));
+
+     setSubmissionsLoading(false);
+    }
+
+    catch (error) {
+      console.error(error);
     }
   };
 
@@ -144,9 +182,45 @@ export default function ProblemSolvingPage() {
     }
   };
 
-  const handleRun = () => {
-    alert('Running code...');
-    // Implement run logic here
+  const handleRun = async () => {
+    setLoading(true);
+    setActiveTab('testResult');
+    setTestResult([]);
+
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/contests/${contestCode}/problems/${problemId}/run`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            language: selectedLanguage,
+            code
+          })
+        }
+      );
+
+      if (!res.ok) throw new Error('Run request failed');
+
+      const {webSocketId} = await res.json();
+
+      const socket = io('http://localhost:5000', {
+        query: {webSocketId}
+      });
+
+      socket.on('codeResult', (result) => {
+        setTestResult(result);
+        console.log(result);
+        setLoadingResult(false);
+        socket.disconnect();
+      });
+
+    } catch (err) {
+      console.error(err);
+      setLoadingResult(false);
+    }
+
   };
 
   const handleSubmit = () => {
@@ -168,9 +242,9 @@ export default function ProblemSolvingPage() {
   };
 
   const getSubmissionStatus = (submission) => {
-    if (submission.points_scored === submission.total_points) {
+    if (submission.pointsScored === submission.totalPoints) {
       return { icon: <Check className="h-4 w-4" />, color: 'text-green-600', text: 'Accepted' };
-    } else if (submission.points_scored > 0) {
+    } else if (submission.pointsScored > 0) {
       return { icon: <Clock className="h-4 w-4" />, color: 'text-yellow-600', text: 'Partial' };
     } else {
       return { icon: <X className="h-4 w-4" />, color: 'text-red-600', text: 'Failed' };
@@ -220,9 +294,6 @@ export default function ProblemSolvingPage() {
         <div className="bg-white/80 backdrop-blur-lg border-b border-white/20 px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <h1 className="text-lg font-semibold text-gray-900">
-                {problem?.title || 'Loading...'}
-              </h1>
               {problem && (
                 <span className={`text-sm font-bold capitalize ${getDifficultyColor(problem.difficulty)}`}>
                   {problem.difficulty}
@@ -384,10 +455,10 @@ export default function ProblemSolvingPage() {
                             </div>
                             <div className="text-right">
                               <div className="text-sm font-semibold text-gray-900">
-                                {submission.points_scored}/{submission.total_points} pts
+                                {submission.pointsScored}/{submission.totalPoints} pts
                               </div>
                               <div className="text-xs text-gray-500">
-                                {submission.test_cases_passed}/{submission.total_test_cases} cases
+                                {submission.testCasesPassed}/{submission.totalTestCases} cases
                               </div>
                             </div>
                           </div>

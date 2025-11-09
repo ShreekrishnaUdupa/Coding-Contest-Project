@@ -1,55 +1,40 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Eye, Edit, Trash2, AlertCircle } from 'lucide-react';
 
-export default function GetAllProblems() {
-  // Mock data for demo purposes
-  const contestId = "123";
+export default function GetAllProblems () {
+	const {contestCode} = useParams();
   const [problems, setProblems] = useState([]);
-  const [role, setRole] = useState('organizer');
+  const [role, setRole] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-
-  // Mock data
-  const mockProblems = [
-    {
-      id: '1',
-      title: 'Two Sum',
-      difficulty: 'easy',
-      totalPoints: 100
-    },
-    {
-      id: '2', 
-      title: 'Binary Tree Maximum Path Sum',
-      difficulty: 'hard',
-      totalPoints: 300
-    },
-    {
-      id: '3',
-      title: 'Longest Palindromic Substring',
-      difficulty: 'medium',
-      totalPoints: 200
-    },
-    {
-      id: '4',
-      title: 'Valid Parentheses',
-      difficulty: 'easy',
-      totalPoints: 150
-    },
-    {
-      id: '5',
-      title: 'Merge K Sorted Lists',
-      difficulty: 'hard',
-      totalPoints: 400
-    }
-  ];
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setProblems(mockProblems);
-      setLoading(false);
-    }, 1000);
-  }, []);
+
+    const fetchProblems = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/api/contests/${contestCode}/problems`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch problems: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setProblems(data.problems || []);
+        setRole(data.role || '');
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || 'Something went wrong');
+        setLoading(false);
+      }
+    };
+
+    fetchProblems();
+  }, [contestCode]);
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty?.toLowerCase()) {
@@ -65,11 +50,11 @@ export default function GetAllProblems() {
   };
 
   const handleViewProblem = (problemId) => {
-    alert(`Navigate to: /contests/id/${contestId}/problems/id/${problemId}`);
+    navigate (`/contests/${contestCode}/problems/${problemId}`);
   };
 
   const handleEditProblem = (problemId) => {
-    alert(`Navigate to edit: /contests/id/${contestId}/problems/id/${problemId}/edit`);
+    alert(`Navigate to edit: /contests/id/${contestCode}/problems/id/${problemId}/edit`);
   };
 
   const handleDeleteProblem = (problemId) => {
@@ -80,10 +65,12 @@ export default function GetAllProblems() {
   };
 
   const handleAddProblem = () => {
-    alert(`Navigate to: /contests/id/${contestId}/problems/add`);
+    navigate(`/contests/${contestCode}/problems/create`);
   };
 
   const canModify = role === 'organizer' || role === 'moderator';
+
+  // ... rest of your JSX stays the same
 
   if (loading) {
     return (
@@ -263,4 +250,98 @@ export default function GetAllProblems() {
       </div>
     </div>
   );
+  
 }
+
+
+/*
+
+import { useState, useEffect } from 'react';
+import { Plus, Eye, Edit, Trash2, AlertCircle } from 'lucide-react';
+
+export default function GetAllProblems() {
+  // Mock data for demo purposes
+  const contestId = "123";
+  const [problems, setProblems] = useState([]);
+  const [role, setRole] = useState('organizer');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Mock data
+  const mockProblems = [
+    {
+      id: '1',
+      title: 'Two Sum',
+      difficulty: 'easy',
+      totalPoints: 100
+    },
+    {
+      id: '2', 
+      title: 'Binary Tree Maximum Path Sum',
+      difficulty: 'hard',
+      totalPoints: 300
+    },
+    {
+      id: '3',
+      title: 'Longest Palindromic Substring',
+      difficulty: 'medium',
+      totalPoints: 200
+    },
+    {
+      id: '4',
+      title: 'Valid Parentheses',
+      difficulty: 'easy',
+      totalPoints: 150
+    },
+    {
+      id: '5',
+      title: 'Merge K Sorted Lists',
+      difficulty: 'hard',
+      totalPoints: 400
+    }
+  ];
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setProblems(mockProblems);
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'easy':
+        return 'text-green-600';
+      case 'medium':
+        return 'text-yellow-600';
+      case 'hard':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  const handleViewProblem = (problemId) => {
+    alert(`Navigate to: /contests/id/${contestId}/problems/id/${problemId}`);
+  };
+
+  const handleEditProblem = (problemId) => {
+    alert(`Navigate to edit: /contests/id/${contestId}/problems/id/${problemId}/edit`);
+  };
+
+  const handleDeleteProblem = (problemId) => {
+    if (window.confirm('Are you sure you want to delete this problem?')) {
+      setProblems(problems.filter(p => p.id !== problemId));
+      alert(`Problem ${problemId} deleted successfully!`);
+    }
+  };
+
+  const handleAddProblem = () => {
+    alert(`Navigate to: /contests/id/${contestId}/problems/add`);
+  };
+
+  const canModify = role === 'organizer' || role === 'moderator';
+
+  
+}*/

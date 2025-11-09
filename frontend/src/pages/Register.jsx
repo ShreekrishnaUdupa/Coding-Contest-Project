@@ -18,13 +18,11 @@ export default function Register () {
     e.preventDefault();
 
     const response = await fetch('http://localhost:4000/api/auth/register', {
-      method: 'POST',
+      method: 'POST', 
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ username, email, password }),
     });
-
-    const data = await response.json();
 
     if (!response.ok) {
       console.error(data.error);

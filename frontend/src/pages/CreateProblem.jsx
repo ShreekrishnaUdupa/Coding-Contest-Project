@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { Plus, Trash2, Eye, Save } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function CreateProblem() {
+  const {contestCode} = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     difficulty: 'easy',
     statement: '',
     constraints: '',
     sampleTestCases: [
-      { number: 1, input: '', expectedOutput: '', points: 0, isSample: true }
+      { input: '', expectedOutput: '', points: 0, isSample: true }
     ],
     hiddenTestCases: [
-      { number: 1, input: '', expectedOutput: '', points: 0, isSample: false }
+      { input: '', expectedOutput: '', points: 0, isSample: false }
     ]
   });
   
@@ -28,7 +31,7 @@ export default function CreateProblem() {
 
   const handleSampleTestCaseChange = (index, field, value) => {
     const updatedTestCases = [...formData.sampleTestCases];
-    if (field === 'points' || field === 'number') {
+    if (field === 'points') {
       updatedTestCases[index][field] = parseInt(value) || 0;
     } else {
       updatedTestCases[index][field] = value;
@@ -42,7 +45,7 @@ export default function CreateProblem() {
 
   const handleHiddenTestCaseChange = (index, field, value) => {
     const updatedTestCases = [...formData.hiddenTestCases];
-    if (field === 'points' || field === 'number') {
+    if (field === 'points') {
       updatedTestCases[index][field] = parseInt(value) || 0;
     } else {
       updatedTestCases[index][field] = value;
@@ -56,7 +59,6 @@ export default function CreateProblem() {
 
   const addSampleTestCase = () => {
     const newTestCase = {
-      number: formData.sampleTestCases.length + 1,
       input: '',
       expectedOutput: '',
       points: 0,
@@ -71,7 +73,6 @@ export default function CreateProblem() {
 
   const addHiddenTestCase = () => {
     const newTestCase = {
-      number: formData.hiddenTestCases.length + 1,
       input: '',
       expectedOutput: '',
       points: 0,
@@ -87,15 +88,10 @@ export default function CreateProblem() {
   const removeSampleTestCase = (index) => {
     if (formData.sampleTestCases.length > 1) {
       const updatedTestCases = formData.sampleTestCases.filter((_, i) => i !== index);
-      // Re-number the test cases
-      const renumberedTestCases = updatedTestCases.map((tc, i) => ({
-        ...tc,
-        number: i + 1
-      }));
       
       setFormData(prev => ({
         ...prev,
-        sampleTestCases: renumberedTestCases
+        sampleTestCases: updatedTestCases
       }));
     }
   };
@@ -103,15 +99,10 @@ export default function CreateProblem() {
   const removeHiddenTestCase = (index) => {
     if (formData.hiddenTestCases.length > 1) {
       const updatedTestCases = formData.hiddenTestCases.filter((_, i) => i !== index);
-      // Re-number the test cases
-      const renumberedTestCases = updatedTestCases.map((tc, i) => ({
-        ...tc,
-        number: i + 1
-      }));
       
       setFormData(prev => ({
         ...prev,
-        hiddenTestCases: renumberedTestCases
+        hiddenTestCases: updatedTestCases
       }));
     }
   };
@@ -154,13 +145,16 @@ export default function CreateProblem() {
     }
 
     try {
-      // Combine sample and hidden test cases for backend
+      // console.log(formData);
+
       const testCases = [
         ...formData.sampleTestCases,
         ...formData.hiddenTestCases
       ];
 
-      const submitData = {
+      // console.log(testCases);
+
+      const data = {
         title: formData.title.trim(),
         difficulty: formData.difficulty,
         statement: formData.statement.trim(),
@@ -168,23 +162,20 @@ export default function CreateProblem() {
         testCases
       };
 
-      // This is where you would send the data to your backend
-      console.log('Sending problem data:', submitData);
-      
-      // Simulate API call
-      setTimeout(() => {
-        alert('Problem created successfully!');
-        setLoading(false);
-        // Reset form or redirect
-      }, 1000);
+      const response = await fetch(`http://localhost:4000/api/contests/${contestCode}/problems`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(data)
+      });
 
-      // Actual API call would be:
-      // const response = await fetch(`http://localhost:4000/api/contests/id/${contestId}/problems`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   credentials: 'include',
-      //   body: JSON.stringify(submitData)
-      // });
+      if (response.ok)
+        navigate (`/contests/${contestCode}/problems`);
+
+      else
+        setError('Internal server error');
+
+      setLoading(false);
       
     } catch (err) {
       console.error('Error creating problem:', err);
@@ -322,7 +313,7 @@ export default function CreateProblem() {
                               <Eye className="h-4 w-4 text-green-600" />
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900">
-                              Sample Test Case {testCase.number}
+                              Sample Test Case
                             </h3>
                           </div>
                           {formData.sampleTestCases.length > 1 && (
@@ -403,7 +394,7 @@ export default function CreateProblem() {
                               </svg>
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900">
-                              Hidden Test Case {testCase.number}
+                              Hidden Test Case
                             </h3>
                           </div>
                           {formData.hiddenTestCases.length > 1 && (
@@ -455,12 +446,18 @@ export default function CreateProblem() {
                             Points
                           </label>
                           <input
-                            type="number"
+                            type="text" // change from number to text
                             value={testCase.points}
-                            onChange={(e) => handleHiddenTestCaseChange(index, 'points', e.target.value)}
-                            min="0"
+                            onChange={(e) => {
+                              const val = e.target.value;
+
+                              // Allow only numbers and decimal points
+                              if (/^\d*\.?\d*$/.test(val)) {
+                                handleHiddenTestCaseChange(index, 'points', val);
+                              }
+                            }}
                             className="w-full px-3 py-2 bg-white border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
-                            placeholder="10"
+                            placeholder="0"
                           />
                         </div>
                       </div>
@@ -473,6 +470,7 @@ export default function CreateProblem() {
               <div className="pt-6">
                 <button
                   type="submit"
+                  onClick={handleSubmit}
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:transform-none"
                 >

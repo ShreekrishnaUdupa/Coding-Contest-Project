@@ -17,7 +17,7 @@ export default function GetContest () {
 
     async function fetchContest () {
       try {
-        const response = await fetch (`http://localhost:4000/api/contests/code/${contestCode}`);
+        const response = await fetch (`http://localhost:4000/api/contests/${contestCode}`);
 
         console.log(response);
         const data = await response.json();

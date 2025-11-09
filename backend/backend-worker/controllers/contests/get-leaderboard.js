@@ -6,7 +6,7 @@ const getLeaderboard = async (req, res) => {
 
     try {
         const {rows: results} = await pool.query (`
-                    SELECT u.username, l.total_points, l.total_submissions
+                    SELECT u.username, l.total_points as "totalPoints", l.total_submissions as "totalSubmissions"
                     FROM leaderboards l
                     JOIN foreign_users u ON u.id = l.user_id
                     WHERE l.contest_code = $1

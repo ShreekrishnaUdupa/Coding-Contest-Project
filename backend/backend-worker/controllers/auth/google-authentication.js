@@ -1,5 +1,5 @@
-import {getUsersDBPool} from '../../routes/utils/get-db-pool.js';
-import generateJWTAndCookieOptions from '../../routes/utils/generate-jwt-and-cookie-options.js';
+import {getUsersDBPool} from '../../utils/get-db-pool.js';
+import generateJWTAndCookieOptions from '../../utils/generate-jwt-and-cookie-options.js';
 
 const googleAuthentication = async (req, res) => {
 
@@ -62,11 +62,11 @@ const googleAuthentication = async (req, res) => {
 		await client.query (`COMMIT`);
 
 		return res.status(201)
-      .clearCookie ('accessToken', {path: '/'})
-      .clearCookie ('refreshToken', {path: '/'})
-			.cookie ('accessToken', accessToken, accessTokenCookieOption)
-			.cookie ('refreshToken', refreshToken, refreshTokenCookieOption)
-      .end();
+		.clearCookie ('accessToken', {path: '/'})
+		.clearCookie ('refreshToken', {path: '/'})
+		.cookie ('accessToken', accessToken, accessTokenCookieOption)
+		.cookie ('refreshToken', refreshToken, refreshTokenCookieOption)
+        .end();
 	}
 
 	catch (error) {

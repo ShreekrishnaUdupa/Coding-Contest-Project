@@ -14,7 +14,7 @@ const submitCode = async (req, res) => {
         
         await channel.waitForConfirms();
 
-        res.status(202).json({runId: `${req.user.id}-${contestCode}-${problemId}`});
+        res.status(202).json({webSocketId: `${req.user.id}-${contestCode}-${problemId}`});
     }
 
     catch (error) {

@@ -118,10 +118,9 @@ export default function CreateContest () {
       });
 
       console.log(response);
-      const data = await response.json();
 
       if (response.ok) {
-        navigate (`/forgot-password`);
+        navigate (`/contests/${formData.code.trim()}/problems`);
         
       } else {
         const errorData = await response.json();

@@ -1,6 +1,5 @@
-import { get } from 'http';
-import {getUsersDBPool} from '../../routes/utils/get-db-pool.js';
-import generateJWTAndCookieOptions from '../../routes/utils/generate-jwt-and-cookie-options.js';
+import {getUsersDBPool} from '../../utils/get-db-pool.js';
+import generateJWTAndCookieOptions from '../../utils/generate-jwt-and-cookie-options.js';
 
 const githubAuthentication = async (req, res) => {
 	

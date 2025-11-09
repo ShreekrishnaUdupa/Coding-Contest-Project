@@ -23,10 +23,9 @@ export default function OAuthCallback () {
           body: JSON.stringify ({code})
         });
 
-        const data = await response.json();
-
-        console.log(data);
-        navigate ('/');
+        if (response.ok) {
+          navigate ('/');
+        }
       }
 
       catch (error) {

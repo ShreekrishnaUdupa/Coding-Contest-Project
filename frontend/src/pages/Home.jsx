@@ -1,9 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home () {
   const [contestCode, setContestCode] = useState('');
   const navigate = useNavigate();
+
+  useEffect (() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch (`http://localhost:4000/api/auth/check`, {
+          method: 'POST',
+          credentials: 'include'}
+        );
+
+        if (response.status !== 200) navigate ('/login');
+    }
+
+    	catch (error) {
+				console.error(error);
+        navigate ('/login');
+      }
+    }
+
+		checkAuth();
+
+  }, [navigate]);
 
   const handleCreateContest = () => {
     navigate ('/contests/create');

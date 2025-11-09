@@ -1,51 +1,42 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Trophy, Medal, Award, Users, Target, TrendingUp } from 'lucide-react';
-import { io } from 'socket.io-client';
 
 export default function GetLeaderboard () {
-
-const contestId = "123";
+  const {contestCode} = useParams();
   const [leaderboard, setLeaderboard] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Mock data for demonstration
-  const mockLeaderboard = [
-    { username: 'CodeMaster2024', total_points: 2850, total_submissions: 15 },
-    { username: 'AlgorithmNinja', total_points: 2720, total_submissions: 12 },
-    { username: 'ByteWarrior', total_points: 2680, total_submissions: 18 },
-    { username: 'LogicLord', total_points: 2540, total_submissions: 14 },
-    { username: 'DataDriven', total_points: 2420, total_submissions: 11 },
-    { username: 'CodeCrusher', total_points: 2380, total_submissions: 16 },
-    { username: 'BinaryBeast', total_points: 2240, total_submissions: 13 },
-    { username: 'SyntaxSage', total_points: 2180, total_submissions: 10 },
-    { username: 'DebuggingDiva', total_points: 2120, total_submissions: 17 },
-    { username: 'RecursiveRabbit', total_points: 2080, total_submissions: 9 }
-  ];
-
   useEffect (() => {
 
-    // dumbshit code
+    const fetchLeaderboard = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    setTimeout(() => {
-      setLeaderboard(mockLeaderboard);
-      setLoading(false);
-    }, 1500);
+        const response = await fetch (`http://localhost:4000/api/contests/${contestCode}/leaderboard`, {credentials: 'include'});
 
-    //
+        if (!response.ok) throw new Error (`HTTP error! Status: ${response.status}`);
 
-    
-    const socket = io ('http://localhost:4000');
+        const data = await response.json();
+        console.log(data);
+        setLeaderboard(data.results || []);
+      }
 
-    socket.emit ('get-leaderboard', contestId);
+      catch (error) {
+        setError(error.message || 'Failed to fetch leaderboard');
+        setLeaderboard([]);
+      }
 
-    socket.on ('leaderboard-data', data => setLeaderboard(data));
-    socket.on ('leaderboard-error', error => setError(error.error));
-    socket.on (`leaderboard-update-${contestId}`, data => setLeaderboard(data));
+      finally {
+        setLoading(false);
+      }
+    }
 
-    return () => { socket.disconnect(); };
-  }, [contestId]);
+    fetchLeaderboard();
+  }, [contestCode]);
+
 const getRankIcon = (position) => {
     switch (position) {
       case 1:
@@ -134,7 +125,7 @@ const getRankIcon = (position) => {
                   <div className="text-center">
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-2 rounded-2xl border border-green-200">
                       <Target className="h-5 w-5 text-green-600 mx-auto mb-1" />
-                      <div className="text-lg font-bold text-green-700">{leaderboard[0]?.total_points || 0}</div>
+                      <div className="text-lg font-bold text-green-700">{leaderboard[0]?.totalPoints || 0}</div>
                       <div className="text-xs text-green-600">Top Score</div>
                     </div>
                   </div>
@@ -142,7 +133,7 @@ const getRankIcon = (position) => {
                     <div className="bg-gradient-to-r from-purple-50 to-violet-50 px-4 py-2 rounded-2xl border border-purple-200">
                       <TrendingUp className="h-5 w-5 text-purple-600 mx-auto mb-1" />
                       <div className="text-lg font-bold text-purple-700">
-                        {Math.round(leaderboard.reduce((acc, user) => acc + user.total_submissions, 0) / leaderboard.length) || 0}
+                        {Math.round(leaderboard.reduce((acc, user) => acc + user.totalSubmissions, 0) / leaderboard.length) || 0}
                       </div>
                       <div className="text-xs text-purple-600">Avg Submissions</div>
                     </div>
@@ -214,12 +205,12 @@ const getRankIcon = (position) => {
                           </td>
                           <td className="px-8 py-6 whitespace-nowrap">
                             <div className="text-base font-semibold text-gray-900">
-                              {user.total_points.toLocaleString()}
+                              {user.totalPoints.toLocaleString()}
                             </div>
                           </td>
                           <td className="px-8 py-6 whitespace-nowrap">
                             <div className="text-base font-semibold text-gray-900">
-                              {user.total_submissions}
+                              {user.totalSubmissions}
                             </div>
                           </td>
                         </tr>
