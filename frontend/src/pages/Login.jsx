@@ -127,7 +127,7 @@ export default function Login () {
 
               {/* Forgot password link */}
               <div className="flex justify-end">
-                <a href="#" className="text-sm text-violet-600 hover:text-violet-700 font-medium transition-colors duration-200">
+                <a onClick={() => navigate ('/forgot-password')} className="text-sm text-violet-600 hover:text-violet-700 font-medium transition-colors duration-200 cursor-pointer">
                   Forgot password?
                 </a>
               </div>

@@ -74,11 +74,9 @@ export default function GetContest () {
 
   async function enterContest () {
     try {
-      const response = await fetch (`http://localhost:4000/api/contests/register`, {
+      const response = await fetch (`http://localhost:4000/api/contests/${contestCode}/register`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify ({contestId: contest.id})
         });
 
         if (!response.ok) {
@@ -87,14 +85,13 @@ export default function GetContest () {
           return;
         }
 
-        navigate (`/contests/id/${contest.id}/problems`);
+        navigate (`/contests/${contestCode}/problems`);
     }
 
     catch (error) {
       console.error(error);
       window.alert(error);
     }
-    // navigate (`/${contestCode}/problems`);
   }
 
   const hasStarted = timeRemaining === 0;
