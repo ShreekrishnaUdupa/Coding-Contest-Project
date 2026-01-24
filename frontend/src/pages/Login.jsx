@@ -26,7 +26,6 @@ export default function Login () {
     if (!response.ok) {
       console.error(error);
       window.alert(error);
-      setError(data.error);
     }
 
     navigate ('/');

@@ -20,7 +20,7 @@ const generateJWTAndCookieOptions = (id) => {
         secure: process.env.NODE_ENV === 'production',
         maxAge: ms (process.env.ACCESS_TOKEN_EXPIRY),
         sameSite: 'lax',
-        path: '/'
+        path: '/',
     }
 
     const refreshTokenCookieOption = {
@@ -28,7 +28,7 @@ const generateJWTAndCookieOptions = (id) => {
         secure: process.env.NODE_ENV === 'production',
         maxAge: ms (process.env.REFRESH_TOKEN_EXPIRY),
         sameSite: 'lax',
-        path: '/'
+        path: '/',
     }
 
     return {accessToken, refreshToken, accessTokenCookieOption, refreshTokenCookieOption};

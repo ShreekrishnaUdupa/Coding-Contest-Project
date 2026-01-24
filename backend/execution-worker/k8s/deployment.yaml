@@ -13,6 +13,7 @@ spec:
       labels:
         app: execution-worker
     spec:
+      hostNetwork: true
       containers:
         - name: execution-worker
           image: execution:latest

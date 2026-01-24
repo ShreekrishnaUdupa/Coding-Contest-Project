@@ -8,10 +8,13 @@ export default function Home () {
   useEffect (() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch (`http://localhost:4000/api/auth/check`, {
+        const response = await fetch (`http://localhost:4000/api/auth/check/`, {
           method: 'POST',
-          credentials: 'include'}
+          credentials: 'include'
+          }
         );
+
+        console.log(response.status);
 
         if (response.status !== 200) navigate ('/login');
     }
