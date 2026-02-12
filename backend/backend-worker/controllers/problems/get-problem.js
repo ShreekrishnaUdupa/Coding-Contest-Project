@@ -19,7 +19,7 @@ const getProblem = async (req, res) => {
 		return res.status(200).json({role: req.user.role, problem});
     }
 
-    catch (error) {
+    catch (error) {``
         console.error(error);
         return res.status(500).json({error: 'Internal server error'});
     }

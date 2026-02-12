@@ -11,7 +11,7 @@ const getContest = async (req, res) => {
         if (results.rows.length === 0)
           return res.status(404).json({error: 'Error 404, contest not found'});
 
-        const {id, title, description, rules, start_time: startTime, end_time: endTime} = results.rows[0];
+        const {title, description, rules, start_time: startTime, end_time: endTime} = results.rows[0];
 
         return res.status(200).json({title, description, rules, startTime, endTime});
     }
